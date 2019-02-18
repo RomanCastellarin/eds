@@ -42,7 +42,8 @@ t.start()
 while True:
   result = ws.recv()
   time.sleep(0.2)
-  print result
+  if "#testresulted" in result["channels"]
+    break
 #  i+=1
 #  if i == 5:
 #    print "Hello Varun"
