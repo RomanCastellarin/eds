@@ -42,7 +42,7 @@ t.start()
 while True:
   result = ws.recv()
   time.sleep(0.2)
-  if "#testresulted" in result["channels"]
+  if "#testresulted" in result["channels"]:
     break
 #  i+=1
 #  if i == 5:
