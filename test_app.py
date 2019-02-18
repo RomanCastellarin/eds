@@ -5,8 +5,9 @@ import os
 from threading import Timer
 import json
 
+print "start of the script"
 ems = os.environ["ET_EMS_LSBEATS_HOST"]
-headers = {'content-type': 'text/plain'}
+# headers = {'content-type', 'text/plain'}
 
 stampers = '''
 when e.strcmp(type,"net") do #NetData
@@ -22,12 +23,15 @@ trigger tjobfinished do emit testcorrect on #testresulted
 trigger tjobfinished do emit testcorrect on #websocket
 '''
 
+
 url = "http://" + ems + ":8888/stamper/tag0.1"
-response = requests.post(url, headers=headers, data=stampers)
+# response = requests.post(url, headers=headers, data=stampers)
+response = requests.post(url, data=stampers)
 print(response.content)
 
 url = "http://" + ems + ":8888/MonitoringMachine/signals0.1"
-response = requests.post(url, headers=headers, data=moms)
+# response = requests.post(url, headers=headers, data=moms)
+response = requests.post(url, data=moms)
 print(response.content)
 
 from websocket import create_connection
