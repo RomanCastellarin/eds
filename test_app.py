@@ -3,6 +3,7 @@ import time
 import sys
 import os
 from threading import Timer
+import json
 
 ems = os.environ["ET_EMS_LSBEATS_HOST"]
 headers = {'content-type': 'application/json'}
@@ -41,6 +42,7 @@ t.start()
 
 while True:
   result = ws.recv()
+  result = json.loads(result)
   if "#testresulted" in result["channels"]:
     print "found"
     break
