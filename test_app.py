@@ -34,15 +34,18 @@ from websocket import create_connection
 url = "ws://" + ems + ":3232"
 ws = create_connection(url)
 i = 0
-def terminate():
-    print "Hello Varun"
+#def terminate():
+#    print "Hello Varun"
 
-t = Timer(60.0, terminate)
-t.start()
+#t = Timer(60.0, terminate)
+#t.start()
 
 while True:
   result = ws.recv()
   result = json.loads(result)
+  i += 1
+  if i==100:
+    print "Hello Varun"
 #  if "#websocket" in result["channels"]:
 #    print "websocket found"
   if "#testresulted" in result["channels"]:
