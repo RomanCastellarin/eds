@@ -36,11 +36,12 @@ i = 0
 def terminate():
     print "Hello Varun"
 
-t = Timer(120.0, terminate)
+t = Timer(60.0, terminate)
 t.start()
 
 while True:
   result = ws.recv()
+  time.sleep(0.2)
   print result
 #  i+=1
 #  if i == 5:
