@@ -6,7 +6,7 @@ from threading import Timer
 import json
 
 ems = os.environ["ET_EMS_LSBEATS_HOST"]
-headers = {'content-type': 'test/plain'}
+headers = {'content-type': 'text/plain'}
 
 stampers = '''
 when e.strcmp(type,"net") do #NetData
