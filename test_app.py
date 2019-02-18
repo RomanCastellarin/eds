@@ -2,6 +2,7 @@ import requests
 import time
 import sys
 import os
+from threading import Timer
 
 ems = os.environ["ET_EMS_LSBEATS_HOST"]
 headers = {'content-type': 'application/json'}
@@ -32,12 +33,18 @@ from websocket import create_connection
 url = "ws://" + ems + ":3232"
 ws = create_connection(url)
 i = 0
+def terminate():
+    print "Hello Varun"
+
+t = Timer(120.0, terminate)
+t.start()
+
 while True:
   result = ws.recv()
   print result
-  i+=1
-  if i == 5:
-    print "Hello Varun"
-    break
+#  i+=1
+#  if i == 5:
+#    print "Hello Varun"
+#    break
 
 print "Hello Varun"
