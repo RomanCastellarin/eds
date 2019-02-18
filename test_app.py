@@ -6,7 +6,7 @@ from threading import Timer
 import json
 
 ems = os.environ["ET_EMS_LSBEATS_HOST"]
-headers = {'content-type': 'application/json'}
+headers = {'content-type': 'test/plain'}
 
 stampers = '''
 when e.strcmp(type,"net") do #NetData
@@ -43,8 +43,8 @@ t.start()
 while True:
   result = ws.recv()
   result = json.loads(result)
-  if "#websocket" in result["channels"]:
-    print "websocket found"
+#  if "#websocket" in result["channels"]:
+#    print "websocket found"
   if "#testresulted" in result["channels"]:
     print "test result found"
     break
