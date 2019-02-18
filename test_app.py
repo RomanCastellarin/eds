@@ -28,7 +28,7 @@ url = "http://" + ems + ":8888/MonitoringMachine/signals0.1"
 response = requests.post(url, headers=headers, data=moms)
 print(response.content)
 
-import websocket import create_connection
+from websocket import create_connection
 url = "ws://" + ems + ":3232"
 ws = create_connection(url)
 i = 0
