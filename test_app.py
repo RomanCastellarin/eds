@@ -43,12 +43,12 @@ while True:
   result = ws.recv()
   result = json.loads(result)
   i += 1
-  if i==100:
-    print "STOP TEST"
+#  if i==100:
+#    print "STOP TEST"
 #  if "#websocket" in result["channels"]:
 #    print "websocket message found"
   if "#terminate" in result["channels"]:
     print "test result found"
     break
 
-print "STOP TEST"
+# print "STOP TEST"
