@@ -48,6 +48,7 @@ while True:
 #  if "#websocket" in result["channels"]:
 #    print "websocket message found"
   if "#terminate" in result["channels"]:
+    print result
     print "test result found"
     break
 
