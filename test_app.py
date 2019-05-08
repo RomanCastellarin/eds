@@ -18,7 +18,7 @@ headers = {'content-type': 'text/plain'}
 
 stampers = "when e.tag(#testresult) do #websocket\n when e.tag(#terminate) do #websocket".encode()
 
-moms = "stream bool result := e.strmatch(message,\"STOP TEST\")\n trigger result do emit result on #terminate".encode()
+moms = "stream bool result := e.strmatch(message,\"STOP_TEST\")\n trigger result do emit result on #terminate".encode()
 
 url = "http://" + ems + ":8888/stamper/tag0.1"
 response = requests.post(url, headers=headers, data=stampers)
