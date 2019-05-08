@@ -7,11 +7,11 @@ import json
 
 print "start of the script"
 
-def terminate():
-    print "STOP TEST"
+# def terminate():
+#     print "STOP TEST"
 
-t = Timer(60.0, terminate)
-t.start()
+# t = Timer(60.0, terminate)
+# t.start()
 
 ems = os.environ["ET_EMS_LSBEATS_HOST"]
 headers = {'content-type': 'text/plain'}
