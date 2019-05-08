@@ -16,9 +16,9 @@ t.start()
 ems = os.environ["ET_EMS_LSBEATS_HOST"]
 headers = {'content-type': 'text/plain'}
 
-stampers = "when e.tag(#testresult) do #websocket\n when e.tag(#terminate) do #websocket\n when e.strcmp(type,\"number\") do #number".encode()
+stampers = "when e.tag(#testresult) do #websocket\n when e.tag(#terminate) do #websocket\n when e.strcmp(mtype,\"number\") do #number".encode()
 
-moms = "stream bool isnum := e.tag(#number)\n stream bool result_1 := e.strmatch(message,\"STOP_TEST\")\n stream num value := if isnum then e.getnum(numbers.integer)\n stream bool result_2 := value > 10\n stream bool result_3 := result_1 \/ result_2 \n trigger result_3 do emit result on #terminate".encode()
+moms = "stream bool isnum := e.tag(#number)\n stream bool result_1 := e.strmatch(message,\"STOP_TEST\")\n stream bool result_2 := e.strmatch(value.integer,\"100\")\n stream bool result_3 := result_1 \/ result_2\n trigger result_3 do emit result on #terminate".encode()
 
 url = "http://" + ems + ":8888/stamper/tag0.1"
 response = requests.post(url, headers=headers, data=stampers)
