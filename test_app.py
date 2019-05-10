@@ -18,7 +18,7 @@ headers = {'content-type': 'text/plain'}
 
 stampers = "when e.tag(#testresult) do #websocket\n when e.tag(#terminate) do #websocket\n when strcmp(data,\"number\") do #number\n".encode()
 
-moms = "pred isnum := e.tag(#number)\n stream bool result_1 := e.strcmp(ourmessage,\"STOP_TEST\")\n stream num value := if isnum then e.getnum(value.integer)\n stream bool result_2 := isnum /\ (value > 10)\n stream bool result_3 := result_1 \/ result_2\n trigger result_3 do emit result_3 on #terminate".encode()
+moms = "pred isnum := e.tag(#number)\n stream bool result_1 := e.strcmp(ourmessage,\"STOP_TEST\")\n stream num value := e.getnum(value.integer)\n stream bool result_2 := (value > 10)\n stream bool result_3 := result_1 \/ result_2\n trigger result_3 do emit result_3 on #terminate".encode()
 
 url = "http://" + ems + ":8888/stamper/tag0.1"
 response = requests.post(url, headers=headers, data=stampers)
