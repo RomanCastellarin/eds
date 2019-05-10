@@ -16,7 +16,7 @@ print "start of the script"
 ems = os.environ["ET_EMS_LSBEATS_HOST"]
 headers = {'content-type': 'text/plain'}
 
-stampers = "when e.tag(#testresult) do #websocket\n when e.tag(#terminate) do #websocket\n when strcmp(data,\"number\") do #number\n".encode()
+stampers = "when e.tag(#testresult) do #websocket\n when e.tag(#terminate) do #websocket\n".encode()
 
 moms = "stream bool result_1 := e.strcmp(ourmessage,\"STOP_TEST\")\n stream bool result_2 := e.getnum(value.integer) > e.getnum(value.low)\n stream bool result_3 := result_1 \/ result_2\n trigger result_3 do emit result_3 on #terminate".encode()
 
