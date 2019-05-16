@@ -27,16 +27,17 @@ class MonitoringTest():
 
     # send stampers to EMS
     url = "http://" + self.ems + ":8888/stamper/tag0.1"
-    response = requests.post(url, headers=headers, data=stampers)
+    response = requests.post(url, headers=self.headers, data=self.stampers)
     print(response.content)
 
     # get the monitoring machines from the file
     with open(os.environ['PWD'] + "/" + "monitoring_machines.txt") as f:
       self.monMachines = f.read()
+      f.close()
 
     # send the monitoring machines to EMS
     url = "http://" + self.ems + ":8888/MonitoringMachine/signals0.1"
-    response = requests.post(url, headers=headers, data=moms)
+    response = requests.post(url, headers=self.headers, data=self.monMachines)
     print(response.content)
 
     print("after sending requests")
@@ -51,7 +52,7 @@ class MonitoringTest():
     print("STOP_TEST")
 
   def start_test(self):
-    url = "ws://" + ems + ":3232"
+    url = "ws://" + self.ems + ":3232"
     ws = create_connection(url)
     print "entering loop"
     while(self.condition):
@@ -60,7 +61,7 @@ class MonitoringTest():
       if "#terminate" in result["channels"]:
         print result
         print "test result found"
-        break
+    exit(0)
 
 if __name__ == "__main__":
   print("Starting the test")
