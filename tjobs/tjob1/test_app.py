@@ -26,7 +26,7 @@ class MonitoringTest():
       f.close()
 
     # send stampers to EMS
-    url = "http://" + ems + ":8888/stamper/tag0.1"
+    url = "http://" + self.ems + ":8888/stamper/tag0.1"
     response = requests.post(url, headers=headers, data=stampers)
     print(response.content)
 
@@ -35,7 +35,7 @@ class MonitoringTest():
       self.monMachines = f.read()
 
     # send the monitoring machines to EMS
-    url = "http://" + ems + ":8888/MonitoringMachine/signals0.1"
+    url = "http://" + self.ems + ":8888/MonitoringMachine/signals0.1"
     response = requests.post(url, headers=headers, data=moms)
     print(response.content)
 
