@@ -1,4 +1,4 @@
-stream bool result_1 := e.strcmp(ourmessage,\"STOP_TEST\")
+stream bool result_1 := e.strcmp(ourmessage,"STOP_TEST")
 stream bool result_2 := e.getnum(value.integer) > e.getnum(value.low)
 stream bool result_3 := result_1 /\ result_2
-trigger result_3 do emit result_3 on #terminate"
+trigger result_3 do emit result_3 on #terminate
