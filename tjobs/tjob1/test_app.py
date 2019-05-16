@@ -61,6 +61,7 @@ class MonitoringTest():
       if "#terminate" in result["channels"]:
         print result
         print "test result found"
+        break
     exit(0)
 
 if __name__ == "__main__":
