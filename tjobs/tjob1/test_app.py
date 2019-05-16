@@ -62,8 +62,8 @@ class MonitoringTest():
       if "#terminate" in result["channels"]:
         print result
         print "test result found"
+        self.condition = False
         break
-        sys.exit(0)
 
 if __name__ == "__main__":
   print("Starting the test")
