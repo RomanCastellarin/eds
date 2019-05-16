@@ -18,7 +18,7 @@ class MonitoringTest():
       self.duration = os.environ['EDS_TEST_DURATION']
     except KeyError:
       self.duration = 180
-    # self.t = Timer(self.duration, self.terminate)
+    self.t = Timer(self.duration, self.terminate)
     print("before sending requests")
 
     # get the stampers from file
@@ -43,7 +43,7 @@ class MonitoringTest():
 
     print("after sending requests")
     print("starting timer")
-    # self.t.start()
+    self.t.start()
     print("entering loop function")
     self.start_test()
     print("exiting loop function")
@@ -64,6 +64,22 @@ class MonitoringTest():
         print "test result found"
         self.condition = False
         break
+
+      if "#test1sensor" in result["channels"]:
+        print result
+        print "sensor has triggered"
+
+      if "#test1actuator" in result["channels"]:
+        print result
+        print "actuator has triggered"
+
+      if "#test1logic" in result["channels"]:
+        print result
+        print "logic has triggered"
+
+      if "#test1sensortrigger" in result["channels"]:
+        print result
+        print "sensor has to trigger actuator"
 
 if __name__ == "__main__":
   print("Starting the test")
