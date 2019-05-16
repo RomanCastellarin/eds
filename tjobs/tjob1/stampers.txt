@@ -1,0 +1,2 @@
+"when e.tag(#testresult) do #websocket
+when e.tag(#terminate) do #websocket"
