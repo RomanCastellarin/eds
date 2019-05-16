@@ -5,6 +5,7 @@ import os
 from threading import Timer
 import json
 from websocket import create_connection
+import sys
 
 class MonitoringTest():
   def __init__(self):
@@ -61,7 +62,8 @@ class MonitoringTest():
       if "#terminate" in result["channels"]:
         print result
         print "test result found"
-        self.condition = False
+        break
+        sys.exit(0)
 
 if __name__ == "__main__":
   print("Starting the test")
