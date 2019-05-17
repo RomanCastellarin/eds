@@ -19,7 +19,7 @@ class TestSensorBehaviour(unittest.TestCase):
     sensor_trigger_time = time.time()
     trigger_time = sensor_trigger_time - variables.datavalues['test1']['sensor']['lasttriggertime']
     time_behavior = trigger_time <= 6
-    self.assertEqual(time_behavior, "Sensor trigger beyond expected interval")
+    self.assertTrue(time_behavior, "Sensor trigger beyond expected interval")
 
 class TestActuatorTrigger(unittest.TestCase):
   def test_actuator_trigger(self):
@@ -93,7 +93,7 @@ class MonitoringTest():
         print result
         xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(sensorBehaviourSuite)
         variables.datavalues['test1']['sensor']['lasttriggertime'] = time.time()
-        xmlrunner.XMLTestRunner(verbosity=2, output='tmp/test-reporst').run(actuatorTriggerSuite)
+        xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(actuatorTriggerSuite)
         print "sensor has triggered"
 
       if "#test1actuator" in result["channels"]:
