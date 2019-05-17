@@ -6,6 +6,29 @@ from threading import Timer
 import json
 from websocket import create_connection
 import sys
+import unittest
+import xmlrunner
+
+class AssertVariables():
+  datavalues = {'test1':{'sensor':{'lasttriggertime':0}, 'actuator':{'trigger': False}}}
+
+variables = AssertVariables()
+
+class TestSensorBehaviour(unittest.TestCase):
+  def test_sensor_trigger_time(self):
+    sensor_trigger_time = time.time()
+    trigger_time = sensor_trigger_time - variables.datavalues['test1']['sensor']['lasttriggertime']
+    time_behavior = trigger_time <= 6
+    self.assertEqual(time_behavior, "Sensor trigger beyond expected interval")
+
+class TestActuatorTrigger(unittest.TestCase):
+  def test_actuator_trigger(self):
+    if variables.datavalues['test1']['actuator']['trigger']:
+      variables.datavalues['test1']['actuator']['trigger'] = False
+    self.assertFalse(variables.data['test1']['actuator']['trigger'], "Actuator was not triggered")
+
+sensorBehaviourSuite = unittest.TestLoader().loadTestsFromTestCase(TestSensorBehaviour)
+actuatorTriggerSuite = unittest.TestLoader().loadTestsFromTestCase(TestActuatorTrigger)
 
 class MonitoringTest():
   def __init__(self):
@@ -68,10 +91,14 @@ class MonitoringTest():
 
       if "#test1sensor" in result["channels"]:
         print result
+        xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(sensorBehaviourSuite)
+        variables.datavalues['test1']['sensor']['lasttriggertime'] = time.time()
+        xmlrunner.XMLTestRunner(verbosity=2, output='tmp/test-reporst').run(actuatorTriggerSuite)
         print "sensor has triggered"
 
       if "#test1actuator" in result["channels"]:
         print result
+        variables.datavalues['test1']['actuator']['trigger'] = False
         print "actuator has triggered"
 
       if "#test1logic" in result["channels"]:
@@ -80,6 +107,7 @@ class MonitoringTest():
 
       if "#test1sensortrigger" in result["channels"]:
         print result
+        variables.datavalues['test1']['actuator']['trigger'] = True
         print "sensor has to trigger actuator"
 
 if __name__ == "__main__":
