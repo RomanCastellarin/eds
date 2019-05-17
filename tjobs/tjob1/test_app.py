@@ -18,7 +18,7 @@ class MonitoringTest():
       self.duration = os.environ['EDS_TEST_DURATION']
     except KeyError:
       self.duration = 60
-    self.t = Timer(self.duration, self.terminate)
+    # self.t = Timer(self.duration, self.terminate)
     print("before sending requests")
 
     # get the stampers from file
@@ -43,7 +43,7 @@ class MonitoringTest():
 
     print("after sending requests")
     print("starting timer")
-    self.t.start()
+    # self.t.start()
     print("entering loop function")
     self.start_test()
     print("exiting loop function")
@@ -56,6 +56,7 @@ class MonitoringTest():
     url = "ws://" + self.ems + ":3232"
     ws = create_connection(url)
     print "entering loop"
+    self.condition = True
     while(self.condition):
       result = ws.recv()
       result = json.loads(result)
