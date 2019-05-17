@@ -25,7 +25,7 @@ class TestActuatorTrigger(unittest.TestCase):
   def test_actuator_trigger(self):
     if variables.datavalues['test1']['actuator']['trigger']:
       variables.datavalues['test1']['actuator']['trigger'] = False
-    self.assertFalse(variables.data['test1']['actuator']['trigger'], "Actuator was not triggered")
+    self.assertFalse(variables.datavalues['test1']['actuator']['trigger'], "Actuator was not triggered")
 
 sensorBehaviourSuite = unittest.TestLoader().loadTestsFromTestCase(TestSensorBehaviour)
 actuatorTriggerSuite = unittest.TestLoader().loadTestsFromTestCase(TestActuatorTrigger)
