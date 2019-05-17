@@ -17,7 +17,7 @@ class MonitoringTest():
     try:
       self.duration = os.environ['EDS_TEST_DURATION']
     except KeyError:
-      self.duration = 180
+      self.duration = 60
     self.t = Timer(self.duration, self.terminate)
     print("before sending requests")
 
