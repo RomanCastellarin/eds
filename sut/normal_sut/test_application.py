@@ -130,7 +130,7 @@ class TestApplication(XAE):
     def handle_actuator_out(self, cnt, con):
         self.logger.info(':actuator:' + con)
         self.logger.info(cnt)
-        json_message = {'app_name':'test1', 'type':'actuator'}
+        json_message = {'appname':'test1', 'type':'actuator'}
         r = requests.post(self.hostport, json=json_message)
 
     def handle_temperature_sensor(self, cnt, con):
@@ -138,12 +138,12 @@ class TestApplication(XAE):
         actuator_request = self.requests[2]
         self.logger.info(':sensor:'+ con)
         self.logger.info(cnt)
-        json_message = {'app_name':'test1', 'type':'sensor', 'svalue':{'actual':int(float(con)), 'threshold':20}}
+        json_message = {'appname':'test1', 'type':'sensor', 'svalue':{'actual':int(float(con)), 'threshold':20}}
         r = requests.post(self.hostport, json=json_message)
         if float(con) > 30:
             self.push_content(self.requests_ID[actuator_request]['conf']['in_path'],
                     con)
-            json_message = {'app_name':'test1', 'type':'logic'}
+            json_message = {'appname':'test1', 'type':'logic'}
             r = requests.post(self.hostport, json=json_message)
 
     def handle_orch_response(self, cnt, con):
