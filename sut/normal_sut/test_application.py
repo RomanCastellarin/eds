@@ -125,7 +125,7 @@ class TestApplication(XAE):
         gevent.spawn_later(120, self.app_shutdown)
 
     def app_shutdown(self):
-        json_message = {'ourmessage':'STOP_TEST'}
+        json_message = {'ourmessage':'STOP_TEST', 'value':{'integer':10, 'low':9}}
         r = requests.post(self.hostport, json=json_message)
         os.kill(os.getpid(), signal.SIGTERM)
 
