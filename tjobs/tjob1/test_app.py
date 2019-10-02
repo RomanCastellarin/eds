@@ -90,8 +90,8 @@ class MonitoringTest():
 
       if "#test1sensor" in result["channels"]:
         print result
-        if datavalues['test1']['sensor']['firstrun']:
-          datavalues['test1']['sensor']['firstrun'] = False
+        if variables.datavalues['test1']['sensor']['firstrun']:
+          variables.datavalues['test1']['sensor']['firstrun'] = False
           continue
         xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(sensorBehaviourSuite)
         variables.datavalues['test1']['sensor']['lasttriggertime'] = time.time()
