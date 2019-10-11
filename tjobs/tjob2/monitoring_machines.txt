@@ -1,0 +1,7 @@
+stream bool must_finish := e.strcmp(ourmessage,"STOP_TEST")
+
+trigger must_finish do emit must_finish on #terminate
+
+stream bool test1sensor_any := e.strcmp(appname, "test1") /\ e.strcmp(type,"sensor")
+
+trigger test1sensor_any do emit test1sensor_any on #test1sensor

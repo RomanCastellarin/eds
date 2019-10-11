@@ -1,0 +1,5 @@
+when e.tag(#testresult) do #websocket
+when e.tag(#terminate) do #websocket
+when e.tag(#test1sensor) do #websocket
+when e.tag(#test1) do #websocket
+
