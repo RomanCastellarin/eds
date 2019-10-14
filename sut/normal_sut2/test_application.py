@@ -131,7 +131,7 @@ class TestApplication(XAE):
         # check if reply is for this application
         if reply.get('app_ID') == self.app_ID:
             # check the result in the reply
-            if reply.gt('result') == 'SUCCESS':
+            if reply.get('result') == 'SUCCESS':
                 # the reply contains, everything went well
                 request_ID = reply['request_ID']
                 self.requests_ID[request_ID] = reply
