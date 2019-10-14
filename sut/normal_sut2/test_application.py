@@ -116,14 +116,14 @@ class TestApplication(XAE):
         # actual logic is placed here
         self.logger.info(':sensor1:'+ con)
         self.logger.info(cnt)
-        json_message = {'appname': 'test1', 'type': 'sensor', 'id': 1, 'value': int(con) }
+        json_message = {'appname': 'test1', 'type': 'sensor', 'id': 1, 'value': int(float(con)) }
         r = requests.post(self.hostport, json=json_message)
 
     def handle_temperature_sensor2(self, cnt, con):
         # actual logic is placed here
         self.logger.info(':sensor2:'+ con)
         self.logger.info(cnt)
-        json_message = {'appname': 'test1', 'type': 'sensor', 'id': 2, 'value': int(con) }
+        json_message = {'appname': 'test1', 'type': 'sensor', 'id': 2, 'value': int(float(con)) }
         r = requests.post(self.hostport, json=json_message)
 
     def handle_orch_response(self, cnt, con):
