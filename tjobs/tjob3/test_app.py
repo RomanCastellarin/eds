@@ -10,7 +10,15 @@ import unittest
 import xmlrunner
 
 class AssertVariables():
-  datavalues = {'test1':{'sensor':{'lasttriggertime':0, 'firstrun':True}, 'actuator':{'trigger': False}}}
+  datavalues = {'test1':{
+                    'sensor':{
+                        'lasttriggertime': 0,
+                        'firstrun': True
+                    },
+                    'actuator':{
+                        'trigger': False
+                    }
+                }}
 variables = AssertVariables()
 
 class TestSensorBehaviour(unittest.TestCase):

@@ -11,5 +11,4 @@ stream num sensorvalue := e.getnum(svalue.actual)
 trigger test1sensor do emit test1sensor on #test1sensor
 trigger test1actuator do emit test1actuator on #test1actuator
 trigger test1logic do emit test1logic on #test1logic
-trigger test1sensortrigger do emit test1sensortrigger on #test1sensortrigger
-trigger test1sensortrigger do emit sensorvalue on #test1sensortrigger
+trigger test1sensortrigger do emit `{"myvalue": "%sensorvalue"}` on #test1sensortrigger
