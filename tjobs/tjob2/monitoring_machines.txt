@@ -8,4 +8,4 @@ stream bool test1sensor_any := e.strcmp(appname, "test1") /\ e.strcmp(type,"sens
 stream int sensor_id := e.getint(id)
 stream int sensor_value := e.getint(value)
 
-trigger test1sensor_any do emit `{"id": "#sensor_id", "value", "#sensor_value"}` on #test1sensor
+trigger test1sensor_any do emit `{"id": "%sensor_id", "value": "%sensor_value"}` on #test1sensor
