@@ -36,17 +36,11 @@ class MonitoringTest():
     self.headers = {'content-type': 'text/plain'}
     self.stampers = ""
     self.monMachines = ""
-    try:
-      self.duration = os.environ['EDS_TEST_DURATION']
-    except KeyError:
-      self.duration = 60
-    # self.t = Timer(self.duration, self.terminate)
     print("before sending requests")
 
     # get the stampers from file
     with open(os.environ['PWD'] + "/" + "stampers.txt") as f:
       self.stampers = f.read()
-      f.close()
 
     # send stampers to EMS
     url = "http://" + self.ems + ":8888/stamper/tag0.1"
@@ -56,7 +50,6 @@ class MonitoringTest():
     # get the monitoring machines from the file
     with open(os.environ['PWD'] + "/" + "monitoring_machines.txt") as f:
       self.monMachines = f.read()
-      f.close()
 
     # send the monitoring machines to EMS
     url = "http://" + self.ems + ":8888/MonitoringMachine/signals0.1"
@@ -65,14 +58,9 @@ class MonitoringTest():
 
     print("after sending requests")
     print("starting timer")
-    # self.t.start()
     print("entering loop function")
     self.start_test()
     print("exiting loop function")
-
-  def terminate(self):
-    self.condition = False
-    print("STOP_TEST")
 
   def start_test(self):
     url = "ws://" + self.ems + ":3232"

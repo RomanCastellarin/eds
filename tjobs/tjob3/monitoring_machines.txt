@@ -1,7 +1,5 @@
 stream bool result_1 := e.strcmp(ourmessage,"STOP_TEST")
-stream bool result_2 := e.getnum(value.integer) > e.getnum(value.low)
-stream bool result_3 := result_1 /\ result_2
-trigger result_3 do emit result_3 on #terminate
+trigger result_1 do emit result_1 on #terminate
 
 stream bool test1sensor := e.strcmp(appname, "test1") /\ e.strcmp(type,"sensor")
 stream bool test1actuator := e.strcmp(appname, "test1") /\ e.strcmp(type,"actuator")
