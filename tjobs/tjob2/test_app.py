@@ -30,10 +30,7 @@ class MonitoringTest():
     self.headers = {'content-type': 'text/plain'}
     self.stampers = ""
     self.monMachines = ""
-    try:
-      self.duration = os.environ['EDS_TEST_DURATION']
-    except KeyError:
-      self.duration = 60
+    
     print("before sending requests")
 
     # get the stampers from file
@@ -67,6 +64,7 @@ class MonitoringTest():
     while(self.condition):
       result = ws.recv()
       result = json.loads(result)
+      print result
       if "#terminate" in result["channels"]:
         print result
         print "test result found"
