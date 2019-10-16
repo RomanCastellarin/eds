@@ -28,10 +28,10 @@ class TestSensorBehaviour(unittest.TestCase):
 
 class TestActuatorTrigger(unittest.TestCase):
   def test_actuator_trigger(self):
-    return
-    if variables.datavalues['test1']['actuator']['trigger']:
-      variables.datavalues['test1']['actuator']['trigger'] = False
-    self.assertFalse(variables.datavalues['test1']['actuator']['trigger'], "Actuator was not triggered")
+    for actuator_id, actuator in variables.datavalues['test1']['actuator'].iteritems():
+        #if variables.datavalues['test1']['actuator']['trigger']:
+        #   variables.datavalues['test1']['actuator']['trigger'] = False
+        self.assertFalse(actuator['trigger'], "Actuator was not triggered")
 
 sensorBehaviourSuite = unittest.TestLoader().loadTestsFromTestCase(TestSensorBehaviour)
 actuatorTriggerSuite = unittest.TestLoader().loadTestsFromTestCase(TestActuatorTrigger)
@@ -111,10 +111,12 @@ class MonitoringTest():
         print result
         actuator_id = int(result["value"])
         variables.datavalues['test1']['actuator'][actuator_id]['trigger'] = False
+        # TODO: check for time window
         print "actuator has triggered"
 
       if "#test1logic" in result["channels"]:
         print result
+        # this is tested in sensor1trigger
         print "logic has triggered"
 
       if "#test1sensortrigger" in result["channels"]:
