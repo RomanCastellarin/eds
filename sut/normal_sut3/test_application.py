@@ -16,8 +16,9 @@ class TestApplication(XAE):
         self.sensor_temp_path = 'onem2m/TemperatureSensor/'
         self.actuator_simple_path = 'onem2m/SimpleActuator/'
 
+        self.NUM_SENSORS = 3
         self.requests_ID = {}
-        self.sensors = {}
+        self.sensor_requests = []
         self.actuators = {}
         self.app_ID = "testapplication"
         self.requests = []
@@ -71,13 +72,16 @@ class TestApplication(XAE):
         gevent.sleep(3)
 
         # register the sensor - 1
-        request_ID = (uuid.uuid4().hex)[:12]
-        request_ID = str('sensor_temp_' + request_ID)
-        request = [{'register':{'sensor':{'app_ID':self.app_ID,
-            'request_ID':request_ID, 'sensor_type':'temperature'}}}]
-        self.push_content(request_path, request)
-        self.requests.append(request_ID)
-        self.logger.info('sent request to register sensor')
+        # register NUM_SENSORS temperature sensors
+        for _ in range(self.NUM_SENSORS):
+            request_ID = (uuid.uuid4().hex)[:12]
+            request_ID = str('sensor_temp_' + request_ID)
+            request = [{'register':{'sensor':{'app_ID':self.app_ID,
+                'request_ID':request_ID, 'sensor_type':'temperature'}}}]
+            self.push_content(request_path, request)
+            self.sensor_requests.append(request_ID)
+            self.logger.info('sent request to register sensor')
+        self.requests.append(None) # placeholder TODO: tidy up
         gevent.sleep(3)
 
         # register the actuator - 2
@@ -91,14 +95,16 @@ class TestApplication(XAE):
         gevent.sleep(3)
 
         # switch on the temperature sensor - 3
-        request_ID = (uuid.uuid4().hex)[:12]
-        request_ID = str('modify_' + request_ID)
-        sensor_name = self.requests_ID[self.requests[1]]['conf']['name']
-        self.requests.append(request_ID)
-        request = [{'modify':{'app_ID':self.app_ID, 'request_ID':
-            request_ID, 'name' : sensor_name, 'conf':{'onoff':'ON', 'period':5}}}]
-        request_path = self.sensor_temp_path + 'request'
-        self.push_content(request_path, request)
+        # switch all temperature sensors
+        for sensor_id in range(self.NUM_SENSORS):
+            request_ID = (uuid.uuid4().hex)[:12]
+            request_ID = str('modify_' + request_ID)
+            sensor_name = self.requests_ID[self.sensor_requests[sensor_id]]['conf']['name']
+            self.requests.append(request_ID)
+            request = [{'modify':{'app_ID':self.app_ID, 'request_ID':
+                request_ID, 'name' : sensor_name, 'conf':{'onoff':'ON', 'period':5}}}]
+            request_path = self.sensor_temp_path + 'request'
+            self.push_content(request_path, request)
 
         request_ID = (uuid.uuid4().hex)[:12]
         request_ID = str('modify_' + request_ID)
@@ -109,13 +115,13 @@ class TestApplication(XAE):
         request_path = self.actuator_simple_path + 'request'
         self.push_content(request_path, request)
 
-        # run a polling loop to check if the system is established
+        # wait 5s and hope the system be established
         # if established we will connect the sensor application
         self.logger.info('waiting for system to be established...')
         gevent.sleep(5)
-        sensor_request = self.requests[1]
+        sensor_request = self.sensor_requests[0] #first sensor only
         self.add_container_subscription(self.requests_ID[sensor_request]['conf']['path'],
-                partial(self.handle_temperature_sensor, id=517))
+                partial(self.handle_temperature_sensor, id=500))
 
         actuator_request = self.requests[2]
         self.add_container_subscription(self.requests_ID[actuator_request]['conf']['out_path'],
