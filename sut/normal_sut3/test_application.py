@@ -5,6 +5,7 @@ import uuid
 import os
 import signal
 import requests
+from functools import partial
 
 class TestApplication(XAE):
 
@@ -114,7 +115,7 @@ class TestApplication(XAE):
         gevent.sleep(5)
         sensor_request = self.requests[1]
         self.add_container_subscription(self.requests_ID[sensor_request]['conf']['path'],
-                self.handle_temperature_sensor)
+                partial(self.handle_temperature_sensor, id=517))
 
         actuator_request = self.requests[2]
         self.add_container_subscription(self.requests_ID[actuator_request]['conf']['out_path'],
@@ -135,9 +136,10 @@ class TestApplication(XAE):
         json_message = {'appname':'test1', 'type':'actuator', 'svalue':{'actual':1, 'threshold':20}}
         r = requests.post(self.hostport, json=json_message)
 
-    def handle_temperature_sensor(self, cnt, con):
+    def handle_temperature_sensor(self, cnt, con, id=0):
         # actual logic is placed here
         actuator_request = self.requests[2]
+        self.logger.info('handling temp sensor %d' % id)
         self.logger.info(':sensor:'+ con)
         self.logger.info(cnt)
         json_message = {'appname':'test1', 'type':'sensor', 'svalue':{'actual':int(float(con)), 'threshold':20}}
