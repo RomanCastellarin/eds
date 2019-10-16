@@ -18,7 +18,9 @@ variables = AssertVariables()
 
 class TestSensorBehaviour(unittest.TestCase):
   def test_sensor_trigger_time(self):
-    for sensor in varaibles.datavalues['test1']['sensor']:
+    for sensor in variables.datavalues['test1']['sensor']:
+        if sensor['firstrun']:
+            continue
         sensor_trigger_time = time.time()
         trigger_time = sensor_trigger_time - sensor['lasttriggertime']
         time_behavior = trigger_time <= 6 # twice the expected time between signals 
