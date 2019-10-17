@@ -143,8 +143,8 @@ class MonitoringTest():
       if "#test1logic" in result["channels"]:
         print result
         # this is tested in sensor1trigger
-        actuator_id = int(result["value"])
-        variables.datavalues['test1']['actuator'][actuator_id]['lastsignaled'] = time.time()
+        #actuator_id = int(result["value"])
+        #variables.datavalues['test1']['actuator'][actuator_id]['lastsignaled'] = time.time()
         print "logic has triggered"
 
       if "#test1sensortrigger" in result["channels"]:
