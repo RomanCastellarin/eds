@@ -26,6 +26,8 @@ class TestApplication(XAE):
         self.ems = os.environ["ET_EMS_LSBEATS_HOST"]
         self.hostport = 'http://' + self.ems + ":8181"
 
+    def __gen_ID(self):
+        return uuid.uuid4().hex[:12]
 
     def _on_register(self):
 
@@ -35,11 +37,11 @@ class TestApplication(XAE):
 
         # subscribe to temperature sensor response
         response_path = self.sensor_temp_path + 'response'
-        self.add_container_subscription(response_path, self.handle_temp_response)
+        self.add_container_subscription(response_path, self.handle_generic_response)
 
         # subscribe to the simple actuator response
         response_path = self.actuator_simple_path + 'response'
-        self.add_container_subscription(response_path, self.handle_simple_response)
+        self.add_container_subscription(response_path, self.handle_generic_response)
 
         gevent.sleep(0)
         gevent.spawn_later(5,self.send_requests)
@@ -48,8 +50,7 @@ class TestApplication(XAE):
 
     def _on_shutdown(self):
         # deregister the application - 4
-        request_ID = (uuid.uuid4().hex)[:12]
-        request_ID = str('deregister_'+ request_ID)
+        request_ID = str('deregister_'+ self.__gen_ID())
         request = [{'deregister':{'application':{'app_ID':self.app_ID, 'request_ID':
             request_ID}}}]
         request_path = self.orch_path + 'request'
@@ -57,9 +58,8 @@ class TestApplication(XAE):
 
     def send_requests(self):
         # register the application - 0
-        request_ID = (uuid.uuid4().hex)[:12]
         # append the request to requests
-        request_ID = str('app_' + request_ID)
+        request_ID = str('app_' + self.__gen_ID())
         request = [{'register':{'application':{'app_ID':self.app_ID,
             'request_ID':request_ID}}}]
         request_path = self.orch_path + 'request'
@@ -70,8 +70,7 @@ class TestApplication(XAE):
         # register the sensor - 1
         # register NUM_PAIRS temperature sensors
         for _ in range(self.NUM_PAIRS):
-            request_ID = (uuid.uuid4().hex)[:12]
-            request_ID = str('sensor_temp_' + request_ID)
+            request_ID = str('sensor_temp_' + self.__gen_ID())
             request = [{'register':{'sensor':{'app_ID':self.app_ID,
                 'request_ID':request_ID, 'sensor_type':'temperature'}}}]
             self.push_content(request_path, request)
@@ -82,8 +81,7 @@ class TestApplication(XAE):
         # register the actuator - 2
         # register NUM_PAIRS actuators
         for _ in range(self.NUM_PAIRS):
-            request_ID = (uuid.uuid4().hex)[:12]
-            request_ID = str('actuator_simple_' + request_ID)
+            request_ID = str('actuator_simple_' + self.__gen_ID())
             request = [{'register':{'actuator':{'app_ID':self.app_ID,
                 'request_ID':request_ID, 'actuator_type':'simple'}}}]
             self.push_content(request_path, request)
@@ -94,8 +92,7 @@ class TestApplication(XAE):
         # switch on the temperature sensor - 3
         # switch all temperature sensors
         for sensor_id in range(self.NUM_PAIRS):
-            request_ID = (uuid.uuid4().hex)[:12]
-            request_ID = str('modify_' + request_ID)
+            request_ID = str('modify_' + self.__gen_ID())
             sensor_name = self.stored_reply[self.sensor_requests[sensor_id]]['conf']['name']
             request = [{'modify':{'app_ID':self.app_ID, 'request_ID':
                 request_ID, 'name' : sensor_name, 'conf':{'onoff':'ON', 'period':5}}}]
@@ -104,8 +101,7 @@ class TestApplication(XAE):
 
         # config all actuators
         for actuator_id in range(self.NUM_PAIRS):
-            request_ID = (uuid.uuid4().hex)[:12]
-            request_ID = str('modify_' + request_ID)
+            request_ID = str('modify_' + self.__gen_ID())
             actuator_name = self.stored_reply[self.actuator_requests[actuator_id]]['conf']['name']
             request = [{'modify':{'app_ID':self.app_ID, 'request_ID':
                 request_ID, 'name' : actuator_name, 'conf':{'delay':3}}}]
@@ -176,7 +172,7 @@ class TestApplication(XAE):
         else:
             self.logger.info('received message not for this app')
 
-    def handle_temp_response(self, cnt, con):
+    def handle_generic_response(self, cnt, con):
         reply = con
         if 'app_ID' in reply and reply['app_ID'] == self.app_ID:
             if 'result' in reply and reply['result'] == 'SUCCESS':
@@ -189,19 +185,4 @@ class TestApplication(XAE):
                 self.logger.info(request_ID + ' did not succeed')
         else:
             self.logger.info('received message not for this app')
-
-    def handle_simple_response(self, cnt, con):
-        reply = con
-        if 'app_ID' in reply and reply['app_ID'] == self.app_ID:
-            if 'result' in reply and reply['result'] == 'SUCCESS':
-                request_ID = reply['request_ID']
-                self.logger.info(request_ID + ' was a success')
-
-            else:
-                request_ID = reply['request_ID']
-                error = reply['error_string']
-                self.logger.info(request_ID + ' did not succeed')
-        else:
-            self.logger.info('received message not for this app')
-
 
