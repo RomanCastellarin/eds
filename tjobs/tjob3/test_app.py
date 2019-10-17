@@ -11,6 +11,7 @@ import xmlrunner
 
 class AssertVariables():
   datavalues = {'test1':{
+                    'currentid': None,
                     'sensor':{},
                     'actuator':{}
                 }}
@@ -18,23 +19,42 @@ variables = AssertVariables()
 
 class TestSensorBehaviour(unittest.TestCase):
   def test_sensor_trigger_time(self):
-    for sensor_id, sensor in variables.datavalues['test1']['sensor'].iteritems():
-        if sensor['firstrun']:
-            continue
-        sensor_trigger_time = time.time()
-        trigger_time = sensor_trigger_time - sensor['lasttriggertime']
-        time_behavior = trigger_time <= 6 # twice the expected time between signals 
-        self.assertTrue(time_behavior, "Sensor trigger beyond expected interval")
+    sensor_id = variables.datavalues['test1']['currentid']
+    sensor = variables.datavalues['test1']['sensor'][sensor_id]
+    #for sensor_id, sensor in variables.datavalues['test1']['sensor'].iteritems():
+    #    if sensor['firstrun']:
+    #        continue
+    sensor_trigger_time = time.time()
+    trigger_time = sensor_trigger_time - sensor['lasttriggertime']
+    time_behavior = trigger_time <= 6 # 1 additional second to the expected time between signals 
+    self.assertTrue(time_behavior, "Sensor trigger beyond expected interval")
+    time_behavior = trigger_time >= 4 # 1 second less to the expected time between signals 
+    #self.assertTrue(time_behavior, "Sensor trigger earlier than expected")
+    
+class TestActuatorSignal(unittest.TestCase):
+  def test_actuator_signal(self):
+    actuator_id = variables.datavalues['test1']['currentid']
+    actuator = variables.datavalues['test1']['actuator'][actuator_id]
+    #for actuator_id, actuator in variables.datavalues['test1']['actuator'].iteritems():
+    #    if variables.datavalues['test1']['actuator']['trigger']:
+    #       variables.datavalues['test1']['actuator']['trigger'] = False
+    self.assertNone(actuator['lastsignaled'], "Actuator was not triggered")
+
 
 class TestActuatorTrigger(unittest.TestCase):
   def test_actuator_trigger(self):
-    for actuator_id, actuator in variables.datavalues['test1']['actuator'].iteritems():
-        #if variables.datavalues['test1']['actuator']['trigger']:
-        #   variables.datavalues['test1']['actuator']['trigger'] = False
-        self.assertFalse(actuator['trigger'], "Actuator was not triggered")
+    actuator_id = variables.datavalues['test1']['currentid']
+    actuator = variables.datavalues['test1']['actuator'][actuator_id]
+    self.assertIsNotNone(actuator['lastsignaled'], "Actuator should not have triggered")
+    trigger_time = time.time() - sensor['lastsignaled']
+    time_behavior = trigger_time <= 4 # 1 additional second to the expected time between signals 
+    self.assertTrue(time_behavior, "Sensor trigger beyond expected interval")
+    time_behavior = trigger_time >= 2 # 1 second less to the expected time between signals 
+    self.assertTrue(time_behavior, "Sensor trigger earlier than expected")
 
 sensorBehaviourSuite = unittest.TestLoader().loadTestsFromTestCase(TestSensorBehaviour)
 actuatorTriggerSuite = unittest.TestLoader().loadTestsFromTestCase(TestActuatorTrigger)
+actuatorSignalSuite = unittest.TestLoader().loadTestsFromTestCase(TestActuatorSignal)
 
 class MonitoringTest():
   def __init__(self):
@@ -47,7 +67,8 @@ class MonitoringTest():
                                                     'firstrun': True
                                                 }
         variables.datavalues['test1']['actuator'][pair_id] = {
-                                                'trigger': False
+                                                'trigger': False,
+                                                'lastsignaled': None,
                                                 } 
 
     self.condition = True
@@ -98,20 +119,24 @@ class MonitoringTest():
       if "#test1sensor" in result["channels"]:
         print result
         sensor_id = int(result["value"])
+        variables.datavalues['currentid'] = sensor_id
         if variables.datavalues['test1']['sensor'][sensor_id]['firstrun']:
           variables.datavalues['test1']['sensor'][sensor_id]['lasttriggertime'] = time.time()
           variables.datavalues['test1']['sensor'][sensor_id]['firstrun'] = False
           continue
         xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(sensorBehaviourSuite)
         variables.datavalues['test1']['sensor'][sensor_id]['lasttriggertime'] = time.time()
-        xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(actuatorTriggerSuite)
+        # check it no longer needs signal
+        xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(actuatorSignalSuite)
         print "sensor has triggered"
 
       if "#test1actuator" in result["channels"]:
         print result
         actuator_id = int(result["value"])
-        variables.datavalues['test1']['actuator'][actuator_id]['trigger'] = False
-        # TODO: check for time window
+        variables.datavalues['currentid'] = actuator_id
+        # check time is around 3s
+        xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(actuatorTriggerSuite)
+        #variables.datavalues['test1']['actuator'][actuator_id]['trigger'] = False
         print "actuator has triggered"
 
       if "#test1logic" in result["channels"]:
@@ -122,7 +147,8 @@ class MonitoringTest():
       if "#test1sensortrigger" in result["channels"]:
         print result
         actuator_id = int(result["myid"])
-        variables.datavalues['test1']['actuator'][actuator_id]['trigger'] = True
+        #variables.datavalues['test1']['actuator'][actuator_id]['trigger'] = True
+        variables.datavalues['test1']['actuator'][actuator_id]['lastsignaled'] = time.time()
         print "sensor has to trigger actuator"
 
 if __name__ == "__main__":
