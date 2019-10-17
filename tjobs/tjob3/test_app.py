@@ -11,7 +11,7 @@ import xmlrunner
 
 class AssertVariables():
   datavalues = {'test1':{
-                    'currentid': 'sentinelValue',
+                    'currentid': None,
                     'sensor':{},
                     'actuator':{}
                 }}
@@ -68,7 +68,7 @@ class MonitoringTest():
                                                 }
         variables.datavalues['test1']['actuator'][pair_id] = {
                                                 'trigger': False,
-                                                'lastsignaled': None,
+                                                'lastsignaled': 'sentinel',
                                                 } 
 
     self.condition = True
@@ -150,7 +150,7 @@ class MonitoringTest():
         actuator_id = int(result["myid"])
         #variables.datavalues['test1']['actuator'][actuator_id]['trigger'] = True
         variables.datavalues['test1']['actuator'][actuator_id]['lastsignaled'] = time.time()
-        print "sensor has to trigger actuator"
+        print "sensor has to trigger actuator %d" % actuator_id
 
 if __name__ == "__main__":
   print("Starting the test")
