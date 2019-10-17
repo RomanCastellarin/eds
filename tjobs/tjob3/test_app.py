@@ -45,6 +45,7 @@ class TestActuatorTrigger(unittest.TestCase):
   def test_actuator_trigger(self):
     actuator_id = variables.datavalues['test1']['currentid']
     actuator = variables.datavalues['test1']['actuator'][actuator_id]
+    print 'testing if pair %d should have triggered %s' % (actuator_id, actuator['lastsignaled'])
     self.assertIsNotNone(actuator['lastsignaled'], "Actuator %d should not have triggered" % actuator_id)
     trigger_time = time.time() - actuator['lastsignaled']
     time_behavior = trigger_time <= 4 # 1 additional second to the expected time between signals 
