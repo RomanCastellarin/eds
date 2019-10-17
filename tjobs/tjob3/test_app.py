@@ -119,7 +119,7 @@ class MonitoringTest():
       if "#test1sensor" in result["channels"]:
         print result
         sensor_id = int(result["value"])
-        variables.datavalues['currentid'] = sensor_id
+        variables.datavalues['test1']['currentid'] = sensor_id
         if variables.datavalues['test1']['sensor'][sensor_id]['firstrun']:
           variables.datavalues['test1']['sensor'][sensor_id]['lasttriggertime'] = time.time()
           variables.datavalues['test1']['sensor'][sensor_id]['firstrun'] = False
@@ -133,7 +133,7 @@ class MonitoringTest():
       if "#test1actuator" in result["channels"]:
         print result
         actuator_id = int(result["value"])
-        variables.datavalues['currentid'] = actuator_id
+        variables.datavalues['test1']['currentid'] = actuator_id
         # check time is around 3s
         xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(actuatorTriggerSuite)
         #variables.datavalues['test1']['actuator'][actuator_id]['trigger'] = False
