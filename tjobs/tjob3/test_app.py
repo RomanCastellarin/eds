@@ -11,7 +11,7 @@ import xmlrunner
 
 class AssertVariables():
   datavalues = {'test1':{
-                    'currentid': None,
+                    'currentid': 'sentinelValue',
                     'sensor':{},
                     'actuator':{}
                 }}
