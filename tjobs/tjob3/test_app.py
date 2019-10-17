@@ -38,7 +38,7 @@ class TestActuatorSignal(unittest.TestCase):
     #for actuator_id, actuator in variables.datavalues['test1']['actuator'].iteritems():
     #    if variables.datavalues['test1']['actuator']['trigger']:
     #       variables.datavalues['test1']['actuator']['trigger'] = False
-    self.assertIsNone(actuator['lastsignaled'], "Actuator was not triggered")
+    self.assertIsNone(actuator['lastsignaled'], "Actuator %d was not triggered" % actuator_id)
 
 
 class TestActuatorTrigger(unittest.TestCase):
