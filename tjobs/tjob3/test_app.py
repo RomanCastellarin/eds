@@ -138,18 +138,18 @@ class MonitoringTest():
         # check time is around 3s
         xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(actuatorTriggerSuite)
         variables.datavalues['test1']['actuator'][actuator_id]['lastsignaled'] = None
-        #variables.datavalues['test1']['actuator'][actuator_id]['trigger'] = False
         print "actuator has triggered"
 
       if "#test1logic" in result["channels"]:
         print result
         # this is tested in sensor1trigger
+        actuator_id = int(result["myid"])
+        variables.datavalues['test1']['actuator'][actuator_id]['lastsignaled'] = time.time()
         print "logic has triggered"
 
       if "#test1sensortrigger" in result["channels"]:
         print result
         actuator_id = int(result["myid"])
-        #variables.datavalues['test1']['actuator'][actuator_id]['trigger'] = True
         variables.datavalues['test1']['actuator'][actuator_id]['lastsignaled'] = time.time()
         print "sensor has to trigger actuator %d" % actuator_id
 
