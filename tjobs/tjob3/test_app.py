@@ -136,6 +136,7 @@ class MonitoringTest():
         variables.datavalues['test1']['currentid'] = actuator_id
         # check time is around 3s
         xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(actuatorTriggerSuite)
+        variables.datavalues['test1']['actuator'][actuator_id]['lastsignaled'] = None
         #variables.datavalues['test1']['actuator'][actuator_id]['trigger'] = False
         print "actuator has triggered"
 
