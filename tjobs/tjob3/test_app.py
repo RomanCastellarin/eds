@@ -153,6 +153,9 @@ class MonitoringTest():
         variables.datavalues['test1']['actuator'][actuator_id]['lastsignaled'] = time.time()
         print "sensor has to trigger actuator %d" % actuator_id
 
+    for _ in range(50000):
+        print "make this success"
+
 if __name__ == "__main__":
   print("Starting the test")
   edstest = MonitoringTest()
