@@ -49,7 +49,9 @@ class TestActuatorTrigger(unittest.TestCase):
     self.assertIsNotNone(actuator['lastsignaled'], "Actuator %d should not have triggered" % actuator_id)
     trigger_time = time.time() - actuator['lastsignaled']
     time_behavior = trigger_time <= 4 # 1 additional second to the expected time between signals 
-    self.assertTrue(False, "Sensor trigger beyond expected interval")
+    if not time_behavior:
+        print "TRIGGERTIME", trigger_time
+    self.assertTrue(time_behavior, "Sensor trigger beyond expected interval")
     time_behavior = trigger_time >= 2 # 1 second less to the expected time between signals 
     self.assertTrue(time_behavior, "Sensor trigger earlier than expected")
 
@@ -153,8 +155,8 @@ class MonitoringTest():
         variables.datavalues['test1']['actuator'][actuator_id]['lastsignaled'] = time.time()
         print "sensor has to trigger actuator %d" % actuator_id
 
-    for _ in range(50000):
-        print "make this success"
+    #for _ in range(50000):
+    #    print "make this success"
 
 if __name__ == "__main__":
   print("Starting the test")
