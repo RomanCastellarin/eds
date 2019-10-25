@@ -63,7 +63,7 @@ class TestApplication(XAE):
         request_path = self.orch_path + 'request'
         self.push_content(request_path, request)
         self.logger.info('sent request to register application')
-        gevent.sleep(5)
+        gevent.sleep(3)
 
         # register the sensor
         # register NUM_PAIRS temperature sensors
@@ -74,7 +74,7 @@ class TestApplication(XAE):
             self.sensor_requests.append(request_ID)
         self.push_content(request_path, request)
         self.logger.info('sent request to register %d sensors' % self.NUM_PAIRS)
-        gevent.sleep(5)
+        gevent.sleep(3)
 
         # register the actuator 
         # register NUM_PAIRS actuators
