@@ -135,6 +135,7 @@ class TestApplication(XAE):
         self.logger.info(cnt)
         json_message = {'appname':'test1', 'type':'actuator', 'id':id } 
         r = requests.post(self.hostport, json=json_message)
+        gevent.sleep(0)
 
     def handle_temperature_sensor(self, cnt, con, id):
         # actual logic is placed here
@@ -149,6 +150,7 @@ class TestApplication(XAE):
                     con)
             json_message = {'appname':'test1', 'type':'logic', 'id':id}
             r = requests.post(self.hostport, json=json_message)
+        gevent.sleep(0)
 
     def handle_orch_response(self, cnt, con):
         reply = con
@@ -169,6 +171,7 @@ class TestApplication(XAE):
 
         else:
             self.logger.info('received message not for this app')
+        gevent.sleep(0)
 
     def handle_temp_response(self, cnt, con):
         reply = con
@@ -183,6 +186,7 @@ class TestApplication(XAE):
                 self.logger.info(request_ID + ' did not succeed')
         else:
             self.logger.info('received message not for this app')
+        gevent.sleep(0)
 
     def handle_simple_response(self, cnt, con):
         reply = con
@@ -197,5 +201,6 @@ class TestApplication(XAE):
                 self.logger.info(request_ID + ' did not succeed')
         else:
             self.logger.info('received message not for this app')
+        gevent.sleep(0)
 
 
