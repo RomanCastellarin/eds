@@ -49,14 +49,14 @@ class TestApplication(XAE):
         self.run_forever()
 
     def _on_shutdown(self):
-        # deregister the application
+        # deregister the application - 4
         request_ID = str('deregister_'+ self.__gen_ID())
         request = [{'deregister': {'application': {'app_ID': self.app_ID, 'request_ID': request_ID}}}]
         request_path = self.orch_path + 'request'
         self.push_content(request_path, request)
 
     def send_requests(self):
-        # register the application
+        # register the application - 0
         # append the request to requests
         request_ID = str('app_' + self.__gen_ID())
         request = [{'register': {'application': {'app_ID': self.app_ID, 'request_ID': request_ID}}}]
@@ -65,46 +65,48 @@ class TestApplication(XAE):
         self.logger.info('sent request to register application')
         gevent.sleep(3)
 
-        # register the sensor
+        # register the sensor - 1
         # register NUM_PAIRS temperature sensors
-        request = []
         for _ in range(self.NUM_PAIRS):
             request_ID = str('sensor_temp_' + self.__gen_ID())
-            request.append({'register':{'sensor':{'app_ID':self.app_ID, 'request_ID':request_ID, 'sensor_type': 'temperature'}}})
+            request = [{'register':{'sensor':{'app_ID':self.app_ID,
+                'request_ID':request_ID, 'sensor_type':'temperature'}}}]
+            self.push_content(request_path, request)
             self.sensor_requests.append(request_ID)
-        self.push_content(request_path, request)
-        self.logger.info('sent request to register %d sensors' % self.NUM_PAIRS)
+            self.logger.info('sent request to register sensor')
+            gevent.sleep(0.1)
         gevent.sleep(3)
 
-        # register the actuator 
+        # register the actuator - 2
         # register NUM_PAIRS actuators
-        request = []
         for _ in range(self.NUM_PAIRS):
             request_ID = str('actuator_simple_' + self.__gen_ID())
-            request.append({'register':{'actuator':{'app_ID':self.app_ID, 'request_ID':request_ID, 'actuator_type':'simple'}}})
+            request = [{'register':{'actuator':{'app_ID':self.app_ID,
+                'request_ID':request_ID, 'actuator_type':'simple'}}}]
+            self.push_content(request_path, request)
             self.actuator_requests.append(request_ID)
-        self.push_content(request_path, request)
-        self.logger.info('sent request to register %d actuators' % self.NUM_PAIRS)
+            self.logger.info('sent request to register actuator')
+            gevent.sleep(0.1)
         gevent.sleep(3)
 
-        # switch on the temperature sensor 
+        # switch on the temperature sensor - 3
         # switch all temperature sensors
-        request = []
         for sensor_id in range(self.NUM_PAIRS):
             request_ID = str('modify_' + self.__gen_ID())
             sensor_name = self.stored_reply[self.sensor_requests[sensor_id]]['conf']['name']
-            request.append({'modify':{'app_ID':self.app_ID, 'request_ID': request_ID, 'name' : sensor_name, 'conf':{'onoff':'ON', 'period':5}}})
-        request_path = self.sensor_temp_path + 'request'
-        self.push_content(request_path, request)
+            request = [{'modify':{'app_ID':self.app_ID, 'request_ID':
+                request_ID, 'name' : sensor_name, 'conf':{'onoff':'ON', 'period':5}}}]
+            request_path = self.sensor_temp_path + 'request'
+            self.push_content(request_path, request)
 
         # config all actuators
-        request = []
         for actuator_id in range(self.NUM_PAIRS):
             request_ID = str('modify_' + self.__gen_ID())
             actuator_name = self.stored_reply[self.actuator_requests[actuator_id]]['conf']['name']
-            request.append({'modify':{'app_ID':self.app_ID, 'request_ID': request_ID, 'name' : actuator_name, 'conf':{'delay':3}}})
-        request_path = self.actuator_simple_path + 'request'
-        self.push_content(request_path, request)
+            request = [{'modify':{'app_ID':self.app_ID, 'request_ID':
+                request_ID, 'name' : actuator_name, 'conf':{'delay':3}}}]
+            request_path = self.actuator_simple_path + 'request'
+            self.push_content(request_path, request)
 
         # wait 5s and hope the system be established
         # if established we will connect the sensor application
@@ -133,7 +135,7 @@ class TestApplication(XAE):
         self.logger.info('handling actuator out n. %d' % id)
         self.logger.info(':actuator:' + con)
         self.logger.info(cnt)
-        json_message = {'appname':'test1', 'type':'actuator', 'id':id } 
+        json_message = {'appname':'test1', 'type':'actuator', 'id':id } #, 'svalue':{'actual':1, 'threshold':20}}
         r = requests.post(self.hostport, json=json_message)
 
     def handle_temperature_sensor(self, cnt, con, id):
@@ -147,7 +149,7 @@ class TestApplication(XAE):
         if int(float(con)) > 20:
             self.push_content(self.stored_reply[actuator_request]['conf']['in_path'],
                     con)
-            json_message = {'appname':'test1', 'type':'logic', 'id':id}
+            json_message = {'appname':'test1', 'type':'logic', 'id':id} #, 'svalue':{'actual':1, 'threshold':20}}
             r = requests.post(self.hostport, json=json_message)
 
     def handle_orch_response(self, cnt, con):
