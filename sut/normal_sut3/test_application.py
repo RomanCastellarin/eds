@@ -44,7 +44,7 @@ class TestApplication(XAE):
         self.add_container_subscription(response_path, self.handle_simple_response)
 
         gevent.sleep(0)
-        gevent.spawn_later(5,self.send_requests)
+        gevent.spawn_later(2,self.send_requests)
 
         self.run_forever()
 
