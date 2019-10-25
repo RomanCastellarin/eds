@@ -77,7 +77,8 @@ class TestApplication(XAE):
             self.push_content(request_path, request)
             self.sensor_requests.append(request_ID)
             self.logger.info('sent request to register sensor')
-            gevent.sleep(3)
+            gevent.sleep(0.1)
+        gevent.sleep(3)
 
         # register the actuator - 2
         # register NUM_PAIRS actuators
