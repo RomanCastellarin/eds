@@ -5,6 +5,7 @@ import uuid
 import os
 import signal
 import requests
+import json
 from functools import partial
 
 class TestApplication(XAE):
@@ -28,6 +29,9 @@ class TestApplication(XAE):
 
     def __gen_ID(self):
         return uuid.uuid4().hex[:12]
+
+    def __publish(self, message):
+        print json.dumps(message)
 
     def _on_register(self):
 
@@ -128,7 +132,8 @@ class TestApplication(XAE):
 
     def app_shutdown(self):
         json_message = {'ourmessage':'STOP_TEST'}
-        r = requests.post(self.hostport, json=json_message)
+        self.__publish(json_message)
+        #r = requests.post(self.hostport, json=json_message)
         os.kill(os.getpid(), signal.SIGTERM)
 
     def handle_actuator_out(self, cnt, con, id):
