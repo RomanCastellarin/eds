@@ -114,7 +114,7 @@ class TestApplication(XAE):
         # wait 5s and hope the system be established
         # if established we will connect the sensor application
         self.logger.info('waiting for system to be established...')
-        gevent.sleep(5)
+        gevent.sleep(10)
 
         for index in range(self.NUM_PAIRS):
             sensor_request = self.sensor_requests[index] 
