@@ -157,6 +157,7 @@ class TestApplication(XAE):
 
     def handle_orch_response(self, cnt, con):
         reply = con
+        print reply
         # check if reply is for this application
         if 'app_ID' in reply and reply['app_ID'] == self.app_ID:
             # check the result in the reply
@@ -177,6 +178,7 @@ class TestApplication(XAE):
 
     def handle_temp_response(self, cnt, con):
         reply = con
+        print reply
         if 'app_ID' in reply and reply['app_ID'] == self.app_ID:
             if 'result' in reply and reply['result'] == 'SUCCESS':
                 request_ID = reply['request_ID']
@@ -191,6 +193,7 @@ class TestApplication(XAE):
 
     def handle_simple_response(self, cnt, con):
         reply = con
+        print reply
         if 'app_ID' in reply and reply['app_ID'] == self.app_ID:
             if 'result' in reply and reply['result'] == 'SUCCESS':
                 request_ID = reply['request_ID']
