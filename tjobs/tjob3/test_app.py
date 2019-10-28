@@ -26,9 +26,9 @@ class TestSensorBehaviour(unittest.TestCase):
     #        continue
     sensor_trigger_time = time.time()
     trigger_time = sensor_trigger_time - sensor['lasttriggertime']
-    time_behavior = trigger_time <= 6 # 1 additional second to the expected time between signals 
+    time_behavior = trigger_time <= 11 # 1 additional second to the expected time between signals 
     self.assertTrue(time_behavior, "Sensor trigger beyond expected interval")
-    time_behavior = trigger_time >= 4 # 1 second less to the expected time between signals 
+    time_behavior = trigger_time >= 9 # 1 second less to the expected time between signals 
     #self.assertTrue(time_behavior, "Sensor trigger earlier than expected")
     
 class TestActuatorSignal(unittest.TestCase):
@@ -48,11 +48,11 @@ class TestActuatorTrigger(unittest.TestCase):
     print 'testing if pair %d should have triggered %s' % (actuator_id, actuator['lastsignaled'])
     self.assertIsNotNone(actuator['lastsignaled'], "Actuator %d should not have triggered" % actuator_id)
     trigger_time = time.time() - actuator['lastsignaled']
-    time_behavior = trigger_time <= 4 # 1 additional second to the expected time between signals 
+    time_behavior = trigger_time <= 7 # 1 additional second to the expected time between signals 
     if not time_behavior:
         print "TRIGGERTIME", trigger_time
     self.assertTrue(time_behavior, "Sensor trigger beyond expected interval")
-    time_behavior = trigger_time >= 2 # 1 second less to the expected time between signals 
+    time_behavior = trigger_time >= 5 # 1 second less to the expected time between signals 
     self.assertTrue(time_behavior, "Sensor trigger earlier than expected")
 
 sensorBehaviourSuite = unittest.TestLoader().loadTestsFromTestCase(TestSensorBehaviour)

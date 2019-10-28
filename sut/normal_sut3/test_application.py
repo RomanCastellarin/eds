@@ -99,7 +99,7 @@ class TestApplication(XAE):
             request_ID = str('modify_' + self.__gen_ID())
             sensor_name = self.stored_reply[self.sensor_requests[sensor_id]]['conf']['name']
             request = [{'modify':{'app_ID':self.app_ID, 'request_ID':
-                request_ID, 'name' : sensor_name, 'conf':{'onoff':'ON', 'period':5}}}]
+                request_ID, 'name' : sensor_name, 'conf':{'onoff':'ON', 'period':10}}}]
             request_path = self.sensor_temp_path + 'request'
             self.push_content(request_path, request)
 
@@ -108,7 +108,7 @@ class TestApplication(XAE):
             request_ID = str('modify_' + self.__gen_ID())
             actuator_name = self.stored_reply[self.actuator_requests[actuator_id]]['conf']['name']
             request = [{'modify':{'app_ID':self.app_ID, 'request_ID':
-                request_ID, 'name' : actuator_name, 'conf':{'delay':3}}}]
+                request_ID, 'name' : actuator_name, 'conf':{'delay':6}}}]
             request_path = self.actuator_simple_path + 'request'
             self.push_content(request_path, request)
 
