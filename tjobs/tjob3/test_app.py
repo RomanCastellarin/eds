@@ -120,40 +120,41 @@ class MonitoringTest():
         break
 
       if "#test1sensor" in result["channels"]:
-        print result
+        #print result
         sensor_id = int(result["value"])
         variables.datavalues['test1']['currentid'] = sensor_id
         if variables.datavalues['test1']['sensor'][sensor_id]['firstrun']:
           variables.datavalues['test1']['sensor'][sensor_id]['lasttriggertime'] = time.time()
           variables.datavalues['test1']['sensor'][sensor_id]['firstrun'] = False
           continue
-        xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(sensorBehaviourSuite)
+        #xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(sensorBehaviourSuite)
         variables.datavalues['test1']['sensor'][sensor_id]['lasttriggertime'] = time.time()
         # check it no longer needs signal
-        xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(actuatorSignalSuite)
-        print "sensor has triggered"
+        #xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(actuatorSignalSuite)
+        #print "sensor has triggered"
 
       if "#test1actuator" in result["channels"]:
-        print result
+        #print result
         actuator_id = int(result["value"])
         variables.datavalues['test1']['currentid'] = actuator_id
         # check time is around 3s
-        xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(actuatorTriggerSuite)
+        #xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(actuatorTriggerSuite)
         variables.datavalues['test1']['actuator'][actuator_id]['lastsignaled'] = None
-        print "actuator has triggered"
+        #print "actuator has triggered"
 
       if "#test1logic" in result["channels"]:
-        print result
+        pass
+        #print result
         # this is tested in sensor1trigger
         #actuator_id = int(result["value"])
         #variables.datavalues['test1']['actuator'][actuator_id]['lastsignaled'] = time.time()
-        print "logic has triggered"
+        #print "logic has triggered"
 
       if "#test1sensortrigger" in result["channels"]:
-        print result
+        #print result
         actuator_id = int(result["myid"])
         variables.datavalues['test1']['actuator'][actuator_id]['lastsignaled'] = time.time()
-        print "sensor has to trigger actuator %d" % actuator_id
+        #print "sensor has to trigger actuator %d" % actuator_id
 
     #for _ in range(50000):
     #    print "make this success"
