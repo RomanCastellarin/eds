@@ -26,9 +26,9 @@ class TestSensorBehaviour(unittest.TestCase):
     #        continue
     sensor_trigger_time = time.time()
     trigger_time = sensor_trigger_time - sensor['lasttriggertime']
-    time_behavior = trigger_time <= 11 # 1 additional second to the expected time between signals 
+    time_behavior = trigger_time <= 6 # 1 additional second to the expected time between signals 
     self.assertTrue(time_behavior, "Sensor trigger beyond expected interval")
-    time_behavior = trigger_time >= 9 # 1 second less to the expected time between signals 
+    time_behavior = trigger_time >= 4 # 1 second less to the expected time between signals 
     #self.assertTrue(time_behavior, "Sensor trigger earlier than expected")
     
 class TestActuatorSignal(unittest.TestCase):
@@ -48,11 +48,11 @@ class TestActuatorTrigger(unittest.TestCase):
     print 'testing if pair %d should have triggered %s' % (actuator_id, actuator['lastsignaled'])
     self.assertIsNotNone(actuator['lastsignaled'], "Actuator %d should not have triggered" % actuator_id)
     trigger_time = time.time() - actuator['lastsignaled']
-    time_behavior = trigger_time <= 7 # 1 additional second to the expected time between signals 
+    time_behavior = trigger_time <= 4 # 1 additional second to the expected time between signals 
     if not time_behavior:
         print "TRIGGERTIME", trigger_time
     self.assertTrue(time_behavior, "Sensor trigger beyond expected interval")
-    time_behavior = trigger_time >= 5 # 1 second less to the expected time between signals 
+    time_behavior = trigger_time >= 2 # 1 second less to the expected time between signals 
     self.assertTrue(time_behavior, "Sensor trigger earlier than expected")
 
 sensorBehaviourSuite = unittest.TestLoader().loadTestsFromTestCase(TestSensorBehaviour)
@@ -62,7 +62,7 @@ actuatorSignalSuite = unittest.TestLoader().loadTestsFromTestCase(TestActuatorSi
 class MonitoringTest():
   def __init__(self):
 
-    self.NUM_PAIRS = 64
+    self.NUM_PAIRS = 10
 
     for pair_id in range(self.NUM_PAIRS):
         variables.datavalues['test1']['sensor'][pair_id] = {
@@ -114,7 +114,7 @@ class MonitoringTest():
       result = ws.recv()
       result = json.loads(result)
       if "#terminate" in result["channels"]:
-        print result
+        #print result
         print "test result found"
         self.condition = False
         break
@@ -127,12 +127,12 @@ class MonitoringTest():
           variables.datavalues['test1']['sensor'][sensor_id]['lasttriggertime'] = time.time()
           variables.datavalues['test1']['sensor'][sensor_id]['firstrun'] = False
           continue
-        #xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(sensorBehaviourSuite)
-        unittest.TextTestRunner(verbosity=0).run(sensorBehaviourSuite)
+        xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(sensorBehaviourSuite)
+        #unittest.TextTestRunner(verbosity=0).run(sensorBehaviourSuite)
         variables.datavalues['test1']['sensor'][sensor_id]['lasttriggertime'] = time.time()
         # check it no longer needs signal
-        #xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(actuatorSignalSuite)
-        unittest.TextTestRunner(verbosity=0).run(actuatorSignalSuite)
+        xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(actuatorSignalSuite)
+        #unittest.TextTestRunner(verbosity=0).run(actuatorSignalSuite)
         #print "sensor has triggered"
 
       if "#test1actuator" in result["channels"]:
@@ -140,8 +140,8 @@ class MonitoringTest():
         actuator_id = int(result["value"])
         variables.datavalues['test1']['currentid'] = actuator_id
         # check time is around 3s
-        #xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(actuatorTriggerSuite)
-        unittest.TextTestRunner(verbosity=0).run(actuatorTriggerSuite)
+        xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(actuatorTriggerSuite)
+        #unittest.TextTestRunner(verbosity=0).run(actuatorTriggerSuite)
         variables.datavalues['test1']['actuator'][actuator_id]['lastsignaled'] = None
         #print "actuator has triggered"
 
