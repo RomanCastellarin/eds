@@ -17,7 +17,7 @@ class TestApplication(XAE):
         self.sensor_temp_path = 'onem2m/TemperatureSensor/'
         self.actuator_simple_path = 'onem2m/SimpleActuator/'
 
-        self.NUM_PAIRS = 16
+        self.NUM_PAIRS = 64
         self.stored_reply = {}
         self.sensor_requests = []
         self.actuator_requests = []
@@ -126,9 +126,9 @@ class TestApplication(XAE):
             self.add_container_subscription(self.stored_reply[actuator_request]['conf']['out_path'],
                partial(self.handle_actuator_out, id=actuator_id))
 
-        #stop the tjob after 2 minutes
+        #stop the tjob after 1 minutes
         gevent.sleep(0)
-        gevent.spawn_later(120, self.app_shutdown)
+        gevent.spawn_later(60, self.app_shutdown)
 
     def app_shutdown(self):
         json_message = {'ourmessage':'STOP_TEST'}
