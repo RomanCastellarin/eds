@@ -1,8 +1,5 @@
-stream bool result_1 := e.getJSON(message).strcmp(ourmessage,"STOP_TEST")
-stream bool pepe := e.path(message) \/ e.path(value)
-
-trigger pepe do emit pepe on #terminate
-trigger result_1 do emit result_1 on #terminate
+stream bool must_end := e.strcmp(ourmessage,"STOP_TEST")
+trigger must_end do emit must_end on #terminate
 
 stream bool test1sensor := e.strcmp(appname, "test1") /\ e.strcmp(type,"sensor")
 stream bool test1actuator := e.strcmp(appname, "test1") /\ e.strcmp(type,"actuator")

@@ -132,8 +132,8 @@ class TestApplication(XAE):
 
     def app_shutdown(self):
         json_message = {'ourmessage':'STOP_TEST'}
-        self.__publish(json_message)
-        #r = requests.post(self.hostport, json=json_message)
+        #self.__publish(json_message)
+        r = requests.post(self.hostport, json=json_message)
         os.kill(os.getpid(), signal.SIGTERM)
 
     def handle_actuator_out(self, cnt, con, id):
