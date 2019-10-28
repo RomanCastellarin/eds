@@ -157,6 +157,7 @@ class TestApplication(XAE):
 
     def handle_orch_response(self, cnt, con):
         reply = con
+        self.logger.info('orch handler')
         self.logger.info(str(reply))
         # check if reply is for this application
         if 'app_ID' in reply and reply['app_ID'] == self.app_ID:
@@ -178,6 +179,7 @@ class TestApplication(XAE):
 
     def handle_temp_response(self, cnt, con):
         reply = con
+        self.logger.info('sensor handler')
         self.logger.info(str(reply))
         if 'app_ID' in reply and reply['app_ID'] == self.app_ID:
             if 'result' in reply and reply['result'] == 'SUCCESS':
@@ -193,6 +195,7 @@ class TestApplication(XAE):
 
     def handle_simple_response(self, cnt, con):
         reply = con
+        self.logger.info('actuator handler')
         self.logger.info(str(reply))
         if 'app_ID' in reply and reply['app_ID'] == self.app_ID:
             if 'result' in reply and reply['result'] == 'SUCCESS':
