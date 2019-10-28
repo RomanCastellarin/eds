@@ -94,18 +94,17 @@ class TestApplication(XAE):
             self.next_pair_index += 1
         gevent.sleep(3)
 
-        # switch on all temperature sensors
-        for sensor_index in range(self.NUM_PAIRS):
+        # Set up pairs
+        for index in range(self.NUM_PAIRS):
+            # switch on sensor
             request_ID = str('modify_' + self.__gen_ID())
-            sensor_name = self.stored_reply[self.sensor_requests[sensor_index]]['conf']['name']
+            sensor_name = self.stored_reply[self.sensor_requests[index]]['conf']['name']
             request = [{'modify': {'app_ID': self.app_ID, 'request_ID': request_ID, 'name': sensor_name, 'conf': {'onoff':'ON', 'period':5}}}]
             request_path = self.sensor_temp_path + 'request'
             self.push_content(request_path, request)
-
-        # config all actuators
-        for actuator_index in range(self.NUM_PAIRS):
+            # config actuator
             request_ID = str('modify_' + self.__gen_ID())
-            actuator_name = self.stored_reply[self.actuator_requests[actuator_index]]['conf']['name']
+            actuator_name = self.stored_reply[self.actuator_requests[index]]['conf']['name']
             request = [{'modify':{'app_ID':self.app_ID, 'request_ID': request_ID, 'name' : actuator_name, 'conf':{'delay':3}}}]
             request_path = self.actuator_simple_path + 'request'
             self.push_content(request_path, request)
@@ -114,15 +113,14 @@ class TestApplication(XAE):
         # if established we will connect the sensor application
         self.logger.info('waiting for system to be established...')
         gevent.sleep(5)
-        for sensor_index in range(self.NUM_PAIRS):
-            sensor_request = self.sensor_requests[sensor_index] 
-            self.add_container_subscription(self.stored_reply[sensor_request]['conf']['path'],
-                partial(self.handle_temperature_sensor, index=sensor_index ))
 
-        for actuator_index in range(self.NUM_PAIRS):
-            actuator_request = self.actuator_requests[actuator_index]
+        for index in range(self.NUM_PAIRS):
+            sensor_request = self.sensor_requests[index] 
+            self.add_container_subscription(self.stored_reply[sensor_request]['conf']['path'],
+                partial(self.handle_temperature_sensor, index=index ))
+            actuator_request = self.actuator_requests[index]
             self.add_container_subscription(self.stored_reply[actuator_request]['conf']['out_path'],
-               partial(self.handle_actuator_out, index=actuator_index))
+               partial(self.handle_actuator_out, index=index))
 
         #stop the tjob after 1 minutes
         gevent.sleep(0)
