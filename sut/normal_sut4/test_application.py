@@ -143,7 +143,8 @@ class TestApplication(XAE):
 
     def handle_temperature_sensor(self, cnt, con, index):
         # actual logic is placed here
-        actuator_request = self.actuator_requests[index % self.MAX_ROOMS] 
+        #actuator_request = self.actuator_requests[index % self.MAX_ROOMS] 
+        actuator_request = self.actuator_requests[index] 
         self.logger.info('handling temp sensor n. %d' % index)
         self.logger.info(':sensor:'+ con)
         self.logger.info(cnt)
