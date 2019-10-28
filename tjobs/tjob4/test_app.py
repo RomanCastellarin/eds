@@ -114,7 +114,7 @@ class MonitoringTest():
       result = ws.recv()
       result = json.loads(result)
 
-        print result
+      print result
       if "#terminate" in result["channels"]:
         #print result
         print "test result found"
