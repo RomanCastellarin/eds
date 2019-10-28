@@ -17,7 +17,7 @@ class TestApplication(XAE):
         self.sensor_temp_path = 'onem2m/TemperatureSensor/'
         self.actuator_simple_path = 'onem2m/SimpleActuator/'
 
-        self.NUM_PAIRS = 10
+        self.NUM_PAIRS = 3
         self.MAX_ROOMS = 10
         self.next_pair_index = 0
         self.stored_reply = {}
