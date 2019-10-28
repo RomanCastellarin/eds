@@ -128,9 +128,11 @@ class MonitoringTest():
           variables.datavalues['test1']['sensor'][sensor_id]['firstrun'] = False
           continue
         #xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(sensorBehaviourSuite)
+        unittest.TextTestRunner(verbosity=0).run(sensorBehaviourSuite)
         variables.datavalues['test1']['sensor'][sensor_id]['lasttriggertime'] = time.time()
         # check it no longer needs signal
         #xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(actuatorSignalSuite)
+        unittest.TextTestRunner(verbosity=0).run(actuatorSignalSuite)
         #print "sensor has triggered"
 
       if "#test1actuator" in result["channels"]:
@@ -139,6 +141,7 @@ class MonitoringTest():
         variables.datavalues['test1']['currentid'] = actuator_id
         # check time is around 3s
         #xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(actuatorTriggerSuite)
+        unittest.TextTestRunner(verbosity=0).run(actuatorTriggerSuite)
         variables.datavalues['test1']['actuator'][actuator_id]['lastsignaled'] = None
         #print "actuator has triggered"
 
