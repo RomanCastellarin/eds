@@ -17,7 +17,7 @@ class TestApplication(XAE):
         self.sensor_temp_path = 'onem2m/TemperatureSensor/'
         self.actuator_simple_path = 'onem2m/SimpleActuator/'
 
-        self.NUM_PAIRS = 8
+        self.NUM_PAIRS = 16
         self.stored_reply = {}
         self.sensor_requests = []
         self.actuator_requests = []
@@ -145,7 +145,7 @@ class TestApplication(XAE):
 
     def handle_temperature_sensor(self, cnt, con, id):
         # actual logic is placed here
-        actuator_request = self.actuator_requests[id]
+        actuator_request = self.actuator_requests[id] # self.actuator_requests[id % CAPACITY]
         self.logger.info('handling temp sensor n. %d' % id)
         self.logger.info(':sensor:'+ con)
         self.logger.info(cnt)
