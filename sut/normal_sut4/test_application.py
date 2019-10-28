@@ -17,7 +17,7 @@ class TestApplication(XAE):
         self.sensor_temp_path = 'onem2m/TemperatureSensor/'
         self.actuator_simple_path = 'onem2m/SimpleActuator/'
 
-        self.NUM_PAIRS = 3
+        self.NUM_PAIRS = 1
         self.MAX_ROOMS = 10
         self.next_pair_index = 0
         self.stored_reply = {}
@@ -73,8 +73,10 @@ class TestApplication(XAE):
         self.logger.info('sent request to register application')
         gevent.sleep(3)
 
+        self.logger.info('no pairs ' + self.NUM_PAIRS) 
         # register NUM_PAIRS pairs of temp sensors - actuators
         for _ in range(self.NUM_PAIRS):
+            self.logger.info('new pair')
             index = self.next_pair_index % self.MAX_ROOMS
             # sensor
             request_ID = str('sensor_temp_' + self.__gen_ID())
@@ -122,7 +124,7 @@ class TestApplication(XAE):
             self.add_container_subscription(self.stored_reply[actuator_request]['conf']['out_path'],
                partial(self.handle_actuator_out, index=index))
 
-        #stop the tjob after 1 minutes
+        #stop the tjob after 1 minute
         gevent.sleep(0)
         gevent.spawn_later(60, self.app_shutdown)
 
