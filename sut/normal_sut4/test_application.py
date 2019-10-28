@@ -147,7 +147,7 @@ class TestApplication(XAE):
         self.logger.info('handling temp sensor n. %d' % index)
         self.logger.info(':sensor:'+ con)
         self.logger.info(cnt)
-        json_message = {'appname':'test1', 'type':'sensor', 'id':id, 'svalue':{'actual':int(float(con)), 'threshold':20}}
+        json_message = {'appname':'test1', 'type':'sensor', 'id':index, 'svalue':{'actual':int(float(con)), 'threshold':20}}
         r = requests.post(self.hostport, json=json_message)
         if int(float(con)) > 20:
             self.push_content(self.stored_reply[actuator_request]['conf']['in_path'],
