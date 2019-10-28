@@ -73,7 +73,7 @@ class TestApplication(XAE):
         self.logger.info('sent request to register application')
         gevent.sleep(3)
 
-        self.logger.info('no pairs ' + self.NUM_PAIRS) 
+        self.logger.info('no pairs %d' % self.NUM_PAIRS) 
         # register NUM_PAIRS pairs of temp sensors - actuators
         for _ in range(self.NUM_PAIRS):
             self.logger.info('new pair')
