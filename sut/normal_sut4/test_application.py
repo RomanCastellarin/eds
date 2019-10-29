@@ -97,7 +97,8 @@ class TestApplication(XAE):
         gevent.sleep(3)
 
         # Set up pairs
-        for index in range(self.NUM_PAIRS):
+        for pair_index in range(self.next_pair_index-self.NUM_PAIRS, self.next_pair_index):
+            index = pair_index % self.MAX_ROOMS
             # switch on sensor
             request_ID = str('modify_' + self.__gen_ID())
             sensor_name = self.stored_reply[self.sensor_requests[index]]['conf']['name']
@@ -116,7 +117,8 @@ class TestApplication(XAE):
         self.logger.info('waiting for system to be established...')
         gevent.sleep(10)
 
-        for index in range(self.NUM_PAIRS):
+        for pair_index in range(self.next_pair_index-self.NUM_PAIRS, self.next_pair_index):
+            index = pair_index % self.MAX_ROOMS
             sensor_request = self.sensor_requests[index] 
             self.add_container_subscription(self.stored_reply[sensor_request]['conf']['path'],
                 partial(self.handle_temperature_sensor, index=index ))
