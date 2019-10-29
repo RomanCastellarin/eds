@@ -39,7 +39,7 @@ class TestApplication(XAE):
     def __set_event(self, request):
         self.status = {'request': request, 'event': gevent.event.Event()}
 
-    def __wait_event():
+    def __wait_event(self):
         self.status['event'].wait()
         self.status = {'request' : None, 'event' : None}
 
