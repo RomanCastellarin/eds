@@ -19,7 +19,6 @@ class TestApplication(XAE):
 
         self.NUM_PAIRS = 3
         self.MAX_ROOMS = 10
-        self.next_pair_index = 0
         self.stored_reply = {}
         self.sensor_requests = [None] * self.MAX_ROOMS
         self.actuator_requests = [None] * self.MAX_ROOMS
@@ -29,16 +28,20 @@ class TestApplication(XAE):
         self.ems = os.environ["ET_EMS_LSBEATS_HOST"]
         self.hostport = 'http://' + self.ems + ":8181"
 
-        self.status = {
-            'current' : 'off',
-            'request' : None
-        }
+        self.status = {}
 
     def __gen_ID(self):
         return uuid.uuid4().hex[:12]
 
     def __publish(self, message):
         print json.dumps(message)
+
+    def __set_event(self, request):
+        self.status = {'request': request, 'event': gevent.Event()}
+
+    def __wait_event():
+        self.status['event'].wait()
+        self.status = {'request' : None, 'event' : None}
 
     def _on_register(self):
 
@@ -54,10 +57,7 @@ class TestApplication(XAE):
         response_path = self.actuator_simple_path + 'response'
         self.add_container_subscription(response_path, self.handle_simple_response)
 
-        self.status['current'] = 'started'
-        gevent.sleep(0)
         gevent.spawn_later(2,self.send_requests)
-
         self.run_forever()
 
     def _on_shutdown(self):
@@ -73,61 +73,54 @@ class TestApplication(XAE):
 
         # Register the application
         request_ID = str('app_' + self.__gen_ID())
+        self.__set_event(request_ID)
         request = [{'register': {'application': {'app_ID': self.app_ID, 'request_ID': request_ID}}}]
         request_path = self.orch_path + 'request'
         self.push_content(request_path, request)
         self.logger.info('sent request to register application')
+        self.__wait_event()
 
-        #while( self.status['current'] == 'started' )
-        gevent.sleep(3)
-
-        self.logger.info('no pairs %d' % self.NUM_PAIRS) 
         # register NUM_PAIRS pairs of temp sensors - actuators
-        for _ in range(self.NUM_PAIRS):
-            self.logger.info('new pair')
-            index = self.next_pair_index % self.MAX_ROOMS
+        for pair_index in range(self.NUM_PAIRS):
+            index = pair_index % self.MAX_ROOMS
             # sensor
             request_ID = str('sensor_temp_' + self.__gen_ID())
+            self.__set_event(request_ID)
             request = [{'register': {'sensor': {'app_ID': self.app_ID, 'request_ID': request_ID, 'sensor_type': 'temperature'}}}]
             self.push_content(request_path, request)
             self.sensor_requests[index] = request_ID
             self.logger.info('sent request to register sensor')
-            gevent.sleep(0.1)
+            self.__wait_event()
             # actuator
             request_ID = str('actuator_simple_' + self.__gen_ID())
+            self.__set_event(request_ID)
             request = [{'register': {'actuator': {'app_ID': self.app_ID, 'request_ID': request_ID, 'actuator_type': 'simple'}}}]
             self.push_content(request_path, request)
             self.actuator_requests[index] = request_ID
             self.logger.info('sent request to register actuator')
-            gevent.sleep(0.1)
-            # increment pair counter
-            self.next_pair_index += 1
-
-        #while( faltan contestaciones) wait
-
-        gevent.sleep(3)
-
+            self.__wait_event()
 
         # Set up pairs
-        for pair_index in range(self.next_pair_index-self.NUM_PAIRS, self.next_pair_index):
+        for pair_index in range(self.NUM_PAIRS):
             index = pair_index % self.MAX_ROOMS
             # switch on sensor
             request_ID = str('modify_' + self.__gen_ID())
+            self.__set_event(request_ID)
             sensor_name = self.stored_reply[self.sensor_requests[index]]['conf']['name']
             request = [{'modify': {'app_ID': self.app_ID, 'request_ID': request_ID, 'name': sensor_name, 'conf': {'onoff':'ON', 'period':5, 'min':10, 'max':30}}}]
             request_path = self.sensor_temp_path + 'request'
             self.push_content(request_path, request)
+            self.__wait_event()
             # config actuator
             request_ID = str('modify_' + self.__gen_ID())
+            self.__set_event(request_ID)
             actuator_name = self.stored_reply[self.actuator_requests[index]]['conf']['name']
             request = [{'modify':{'app_ID':self.app_ID, 'request_ID': request_ID, 'name' : actuator_name, 'conf':{'delay':3}}}]
             request_path = self.actuator_simple_path + 'request'
             self.push_content(request_path, request)
+            self.__wait_event()
 
-        # wait 10s and hope the system be established
-        # if established we will connect the sensor application
-        self.logger.info('waiting for system to be established...')
-        gevent.sleep(10)
+        self.logger.info('System should be established...')
 
         for pair_index in range(self.next_pair_index-self.NUM_PAIRS, self.next_pair_index):
             index = pair_index % self.MAX_ROOMS
@@ -139,12 +132,10 @@ class TestApplication(XAE):
                partial(self.handle_actuator_out, index=pair_index))
 
         #stop the tjob after 1 minute
-        gevent.sleep(0)
         gevent.spawn_later(60, self.app_shutdown)
 
     def app_shutdown(self):
         json_message = {'ourmessage':'STOP_TEST'}
-        #self.__publish(json_message)
         r = requests.post(self.hostport, json=json_message)
         os.kill(os.getpid(), signal.SIGTERM)
 
@@ -179,6 +170,9 @@ class TestApplication(XAE):
                 # the reply contains, everything went well
                 request_ID = reply['request_ID']
                 self.stored_reply[request_ID] = reply
+                # if the program was waiting for the reply
+                if self.status.get('request') == request_ID:
+                    self.status['event'].set()
                 self.logger.info(request_ID + ' was a success')
 
             else:
@@ -197,6 +191,8 @@ class TestApplication(XAE):
         if 'app_ID' in reply and reply['app_ID'] == self.app_ID:
             if 'result' in reply and reply['result'] == 'SUCCESS':
                 request_ID = reply['request_ID']
+                if self.status.get('request') == request_ID:
+                    self.status['event'].set()
                 self.logger.info(request_ID + ' was a success')
 
             else:
@@ -213,6 +209,8 @@ class TestApplication(XAE):
         if 'app_ID' in reply and reply['app_ID'] == self.app_ID:
             if 'result' in reply and reply['result'] == 'SUCCESS':
                 request_ID = reply['request_ID']
+                if self.status.get('request') == request_ID:
+                    self.status['event'].set()
                 self.logger.info(request_ID + ' was a success')
 
             else:
