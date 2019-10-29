@@ -84,17 +84,19 @@ class TestApplication(XAE):
             self.push_content(request_path, request)
             self.sensor_requests[index] = request_ID
             self.logger.info('sent request to register sensor')
-            gevent.sleep(0.1)
             # actuator
             request_ID = str('actuator_simple_' + self.__gen_ID())
             request = [{'register': {'actuator': {'app_ID': self.app_ID, 'request_ID': request_ID, 'actuator_type': 'simple'}}}]
             self.push_content(request_path, request)
             self.actuator_requests[index] = request_ID
             self.logger.info('sent request to register actuator')
-            gevent.sleep(0.1)
             # increment pair counter
             self.next_pair_index += 1
+
+        #while( faltan contestaciones) wait
+
         gevent.sleep(3)
+
 
         # Set up pairs
         for pair_index in range(self.next_pair_index-self.NUM_PAIRS, self.next_pair_index):
