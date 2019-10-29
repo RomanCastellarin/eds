@@ -79,7 +79,7 @@ class TestApplication(XAE):
         self.logger.info('sent request to register application')
 
         #while( self.status['current'] == 'started' )
-        #    gevent.sleep(0.5)
+        gevent.sleep(3)
 
         self.logger.info('no pairs %d' % self.NUM_PAIRS) 
         # register NUM_PAIRS pairs of temp sensors - actuators
