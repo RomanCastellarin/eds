@@ -1,6 +1,6 @@
 pred issensor := e.strcmp(appname, "test1") /\ e.strcmp(type,"sensor")
 
-stream num sensorTS := if issensor then e.getnum(@timestamp)
+stream num sensorTS := if issensor then e.getnum(svalue.actual)
 stream num lastSensorTS := last sensorTS
 stream bool notTooOftenSensor := sensorTS - lastSensorTS > 5
 stream bool sensorhigh := issensor /\ e.getnum(svalue.actual) > e.getnum(svalue.threshold)
