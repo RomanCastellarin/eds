@@ -21,23 +21,17 @@ class TestSensorBehaviour(unittest.TestCase):
   def test_sensor_trigger_time(self):
     sensor_id = variables.datavalues['test1']['currentid']
     sensor = variables.datavalues['test1']['sensor'][sensor_id]
-    #for sensor_id, sensor in variables.datavalues['test1']['sensor'].iteritems():
-    #    if sensor['firstrun']:
-    #        continue
     sensor_trigger_time = time.time()
     trigger_time = sensor_trigger_time - sensor['lasttriggertime']
     time_behavior = trigger_time <= 6 # 1 additional second to the expected time between signals 
     self.assertTrue(time_behavior, "Sensor trigger beyond expected interval")
     time_behavior = trigger_time >= 4 # 1 second less to the expected time between signals 
-    #self.assertTrue(time_behavior, "Sensor trigger earlier than expected")
+    self.assertTrue(time_behavior, "Sensor trigger earlier than expected")
     
 class TestActuatorSignal(unittest.TestCase):
   def test_actuator_signal(self):
     actuator_id = variables.datavalues['test1']['currentid']
     actuator = variables.datavalues['test1']['actuator'][actuator_id]
-    #for actuator_id, actuator in variables.datavalues['test1']['actuator'].iteritems():
-    #    if variables.datavalues['test1']['actuator']['trigger']:
-    #       variables.datavalues['test1']['actuator']['trigger'] = False
     self.assertIsNone(actuator['lastsignaled'], "Actuator %d was not triggered" % actuator_id)
 
 
@@ -49,8 +43,6 @@ class TestActuatorTrigger(unittest.TestCase):
     self.assertIsNotNone(actuator['lastsignaled'], "Actuator %d should not have triggered" % actuator_id)
     trigger_time = time.time() - actuator['lastsignaled']
     time_behavior = trigger_time <= 4 # 1 additional second to the expected time between signals 
-    #if not time_behavior:
-    #    print "TRIGGERTIME", trigger_time
     self.assertTrue(time_behavior, "Sensor trigger beyond expected interval")
     time_behavior = trigger_time >= 2 # 1 second less to the expected time between signals 
     self.assertTrue(time_behavior, "Sensor trigger earlier than expected")
@@ -62,7 +54,7 @@ actuatorSignalSuite = unittest.TestLoader().loadTestsFromTestCase(TestActuatorSi
 class MonitoringTest():
   def __init__(self):
 
-    self.NUM_PAIRS = 3
+    self.NUM_PAIRS = 10
 
     for pair_id in range(self.NUM_PAIRS):
         variables.datavalues['test1']['sensor'][pair_id] = {
@@ -129,10 +121,10 @@ class MonitoringTest():
           variables.datavalues['test1']['sensor'][sensor_id]['lasttriggertime'] = time.time()
           variables.datavalues['test1']['sensor'][sensor_id]['firstrun'] = False
           continue
-        xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(sensorBehaviourSuite)
+        xmlrunner.XMLTestRunner(verbosity=0, output='/tmp/test-reports').run(sensorBehaviourSuite)
         variables.datavalues['test1']['sensor'][sensor_id]['lasttriggertime'] = time.time()
         # check it no longer needs signal
-        xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(actuatorSignalSuite)
+        xmlrunner.XMLTestRunner(verbosity=0, output='/tmp/test-reports').run(actuatorSignalSuite)
         print "sensor has triggered"
 
       if "#test1actuator" in result["channels"]:
@@ -140,15 +132,13 @@ class MonitoringTest():
         actuator_id = int(result["value"])
         variables.datavalues['test1']['currentid'] = actuator_id
         # check time is around 3s
-        xmlrunner.XMLTestRunner(verbosity=2, output='/tmp/test-reports').run(actuatorTriggerSuite)
+        xmlrunner.XMLTestRunner(verbosity=0, output='/tmp/test-reports').run(actuatorTriggerSuite)
         variables.datavalues['test1']['actuator'][actuator_id]['lastsignaled'] = None
         print "actuator has triggered"
 
       if "#test1logic" in result["channels"]:
         #print result
         # this is tested in sensor1trigger
-        #actuator_id = int(result["value"])
-        #variables.datavalues['test1']['actuator'][actuator_id]['lastsignaled'] = time.time()
         print "logic has triggered"
 
       if "#test1sensortrigger" in result["channels"]:

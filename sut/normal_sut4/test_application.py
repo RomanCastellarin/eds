@@ -17,7 +17,7 @@ class TestApplication(XAE):
         self.sensor_temp_path = 'onem2m/TemperatureSensor/'
         self.actuator_simple_path = 'onem2m/SimpleActuator/'
 
-        self.NUM_PAIRS = 1
+        self.NUM_PAIRS = 9
         self.MAX_ROOMS = 10
         self.next_pair_index = 0
         self.stored_reply = {}
@@ -101,7 +101,7 @@ class TestApplication(XAE):
             # switch on sensor
             request_ID = str('modify_' + self.__gen_ID())
             sensor_name = self.stored_reply[self.sensor_requests[index]]['conf']['name']
-            request = [{'modify': {'app_ID': self.app_ID, 'request_ID': request_ID, 'name': sensor_name, 'conf': {'onoff':'ON', 'period':5}}}]
+            request = [{'modify': {'app_ID': self.app_ID, 'request_ID': request_ID, 'name': sensor_name, 'conf': {'onoff':'ON', 'period':5, 'min':10, 'max':30}}}]
             request_path = self.sensor_temp_path + 'request'
             self.push_content(request_path, request)
             # config actuator
@@ -143,8 +143,7 @@ class TestApplication(XAE):
 
     def handle_temperature_sensor(self, cnt, con, index):
         # actual logic is placed here
-        #actuator_request = self.actuator_requests[index % self.MAX_ROOMS] 
-        actuator_request = self.actuator_requests[index] 
+        actuator_request = self.actuator_requests[index % self.MAX_ROOMS] 
         self.logger.info('handling temp sensor n. %d' % index)
         self.logger.info(':sensor:'+ con)
         self.logger.info(cnt)
