@@ -112,7 +112,7 @@ class TestApplication(XAE):
             request_path = self.actuator_simple_path + 'request'
             self.push_content(request_path, request)
 
-        # wait 5s and hope the system be established
+        # wait 10s and hope the system be established
         # if established we will connect the sensor application
         self.logger.info('waiting for system to be established...')
         gevent.sleep(10)
@@ -121,10 +121,10 @@ class TestApplication(XAE):
             index = pair_index % self.MAX_ROOMS
             sensor_request = self.sensor_requests[index] 
             self.add_container_subscription(self.stored_reply[sensor_request]['conf']['path'],
-                partial(self.handle_temperature_sensor, index=index ))
+                partial(self.handle_temperature_sensor, index=pair_index ))
             actuator_request = self.actuator_requests[index]
             self.add_container_subscription(self.stored_reply[actuator_request]['conf']['out_path'],
-               partial(self.handle_actuator_out, index=index))
+               partial(self.handle_actuator_out, index=pair_index))
 
         #stop the tjob after 1 minute
         gevent.sleep(0)
