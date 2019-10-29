@@ -37,7 +37,7 @@ class TestApplication(XAE):
         print json.dumps(message)
 
     def __set_event(self, request):
-        self.status = {'request': request, 'event': gevent.Event()}
+        self.status = {'request': request, 'event': gevent.event.Event()}
 
     def __wait_event():
         self.status['event'].wait()
