@@ -162,7 +162,11 @@ class TestApplication(XAE):
     def handle_orch_response(self, cnt, con):
         reply = con
         self.logger.info('orch handler')
-        #self.logger.info(str(reply))
+        self.logger.info(str(reply))
+        # if the program was waiting for the reply
+        if self.status.get('request'):
+            if self.status.get('request') == reply.get('request_ID'):
+                self.status['event'].set()
         # check if reply is for this application
         if reply.get('app_ID') == self.app_ID:
             # check the result in the reply
@@ -170,9 +174,6 @@ class TestApplication(XAE):
                 # the reply contains, everything went well
                 request_ID = reply['request_ID']
                 self.stored_reply[request_ID] = reply
-                # if the program was waiting for the reply
-                if self.status.get('request') == request_ID:
-                    self.status['event'].set()
                 self.logger.info(request_ID + ' was a success')
 
             else:
