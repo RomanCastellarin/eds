@@ -122,7 +122,7 @@ class TestApplication(XAE):
 
         self.logger.info('System should be established...')
 
-        for pair_index in range(self.next_pair_index-self.NUM_PAIRS, self.next_pair_index):
+        for pair_index in range(self.NUM_PAIRS):
             index = pair_index % self.MAX_ROOMS
             sensor_request = self.sensor_requests[index] 
             self.add_container_subscription(self.stored_reply[sensor_request]['conf']['path'],
@@ -162,7 +162,6 @@ class TestApplication(XAE):
     def handle_orch_response(self, cnt, con):
         reply = con
         self.logger.info('orch handler')
-        self.logger.info(str(reply))
         # if the program was waiting for the reply
         if self.status.get('request'):
             if self.status.get('request') == reply.get('request_ID'):
@@ -170,55 +169,53 @@ class TestApplication(XAE):
         # check if reply is for this application
         if reply.get('app_ID') == self.app_ID:
             # check the result in the reply
+            request_ID = reply['request_ID']
             if reply.get('result') == 'SUCCESS':
-                # the reply contains, everything went well
-                request_ID = reply['request_ID']
                 self.stored_reply[request_ID] = reply
                 self.logger.info(request_ID + ' was a success')
-
             else:
-                request_ID = reply['request_ID']
                 error = reply['error_string']
                 self.logger.info(request_ID + ' did not succeed')
                 self.logger.info('error ' + error_string)
 
         else:
             self.logger.info('received message not for this app')
+            self.logger.info(reply)
 
-    def handle_temp_response(self, cnt, con):
-        reply = con
+    def handle_temp_response(self, cnt, reply):
         self.logger.info('sensor handler')
-        self.logger.info(str(reply))
-        if 'app_ID' in reply and reply['app_ID'] == self.app_ID:
-            if 'result' in reply and reply['result'] == 'SUCCESS':
-                request_ID = reply['request_ID']
-                if self.status.get('request') == request_ID:
-                    self.status['event'].set()
+        # if the program was waiting for the reply
+        if self.status.get('request'):
+            if self.status.get('request') == reply.get('request_ID'):
+                self.status['event'].set()
+        if reply.get('app_ID') == self.app_ID:
+            request_ID = reply['request_ID']
+            if reply.get('result') == 'SUCCESS':
                 self.logger.info(request_ID + ' was a success')
-
             else:
-                request_ID = reply['request_ID']
                 error = reply['error_string']
                 self.logger.info(request_ID + ' did not succeed')
+                self.logger.info('error ' + error_string)
         else:
             self.logger.info('received message not for this app')
+            self.logger.info(reply)
 
-    def handle_simple_response(self, cnt, con):
-        reply = con
+    def handle_simple_response(self, cnt, reply):
         self.logger.info('actuator handler')
-        self.logger.info(str(reply))
-        if 'app_ID' in reply and reply['app_ID'] == self.app_ID:
-            if 'result' in reply and reply['result'] == 'SUCCESS':
-                request_ID = reply['request_ID']
-                if self.status.get('request') == request_ID:
-                    self.status['event'].set()
+        # if the program was waiting for the reply
+        if self.status.get('request'):
+            if self.status.get('request') == reply.get('request_ID'):
+                self.status['event'].set()
+        if reply.get('app_ID') == self.app_ID:
+            request_ID = reply['request_ID']
+            if reply.get('result') == 'SUCCESS':
                 self.logger.info(request_ID + ' was a success')
-
             else:
-                request_ID = reply['request_ID']
                 error = reply['error_string']
                 self.logger.info(request_ID + ' did not succeed')
+                self.logger.info('error ' + error_string)
         else:
             self.logger.info('received message not for this app')
+            self.logger.info(reply)
 
 
