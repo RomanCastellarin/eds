@@ -29,6 +29,11 @@ class TestApplication(XAE):
         self.ems = os.environ["ET_EMS_LSBEATS_HOST"]
         self.hostport = 'http://' + self.ems + ":8181"
 
+        self.status = {
+            'current' : 'off',
+            'request' : None
+        }
+
     def __gen_ID(self):
         return uuid.uuid4().hex[:12]
 
@@ -49,6 +54,7 @@ class TestApplication(XAE):
         response_path = self.actuator_simple_path + 'response'
         self.add_container_subscription(response_path, self.handle_simple_response)
 
+        self.status['current'] = 'started'
         gevent.sleep(0)
         gevent.spawn_later(2,self.send_requests)
 
@@ -71,7 +77,9 @@ class TestApplication(XAE):
         request_path = self.orch_path + 'request'
         self.push_content(request_path, request)
         self.logger.info('sent request to register application')
-        gevent.sleep(3)
+
+        #while( self.status['current'] == 'started' )
+        #    gevent.sleep(0.5)
 
         self.logger.info('no pairs %d' % self.NUM_PAIRS) 
         # register NUM_PAIRS pairs of temp sensors - actuators
@@ -84,12 +92,14 @@ class TestApplication(XAE):
             self.push_content(request_path, request)
             self.sensor_requests[index] = request_ID
             self.logger.info('sent request to register sensor')
+            gevent.sleep(0.1)
             # actuator
             request_ID = str('actuator_simple_' + self.__gen_ID())
             request = [{'register': {'actuator': {'app_ID': self.app_ID, 'request_ID': request_ID, 'actuator_type': 'simple'}}}]
             self.push_content(request_path, request)
             self.actuator_requests[index] = request_ID
             self.logger.info('sent request to register actuator')
+            gevent.sleep(0.1)
             # increment pair counter
             self.next_pair_index += 1
 
@@ -161,11 +171,11 @@ class TestApplication(XAE):
     def handle_orch_response(self, cnt, con):
         reply = con
         self.logger.info('orch handler')
-        self.logger.info(str(reply))
+        #self.logger.info(str(reply))
         # check if reply is for this application
-        if 'app_ID' in reply and reply['app_ID'] == self.app_ID:
+        if reply.get('app_ID') == self.app_ID:
             # check the result in the reply
-            if 'result' in reply and reply['result'] == 'SUCCESS':
+            if reply.get('result') == 'SUCCESS':
                 # the reply contains, everything went well
                 request_ID = reply['request_ID']
                 self.stored_reply[request_ID] = reply
