@@ -1,0 +1,29 @@
+pred issensor := e.strcmp(appname, "test1") /\ e.strcmp(type,"sensor")
+pred sensorhigh := issensor /\ e.getnum(svalue.actual) > e.getnum(svalue.threshold)
+pred isactuator := e.strcmp(appname, "test1") /\ e.strcmp(type,"actuator")
+
+stream num sensorTS := if issensor then e.getnum(timestamp)
+stream num lastSensorTS := if issensor then last sensorTS
+
+stream num sensorHighTS := if sensorhigh then e.getnum(timestamp)
+stream num lastSensorHighTS := if sensorhigh then last sensorHighTS
+stream num actuatorTS := if isactuator then e.getnum(timestamp)
+stream num lastActuatorTS := if isactuator then last actuatorTS
+stream bool lastWasActuator := lastSensorHighTS < lastActuatorTS 
+stream bool lastWasSensor := lastActuatorTS < lastSensorHighTS
+
+stream bool checkStatusAct := if isactuator then lastWasSensor
+stream bool checkStatusSens := if sensorhigh then lastWasActuator
+stream bool checkQuickResponse := if isactuator then actuatorTS < lastSensorHighTS + 5
+
+stream bool notTooOftenSensor := sensorTS - lastSensorTS > 4
+stream bool notTooSeldomSensor := sensorTS - lastSensorTS < 5
+
+stream bool failure := ~(notTooOftenSensor /\ notTooSeldomSensor /\ checkStatusAct /\ checkStatusSens /\ checkQuickResponse)
+
+stream bool end := e.strcmp(ourmessage,"STOP_TEST")
+stream num endTS := if end then e.getnum(timestamp)
+stream bool endCorrect := lastWasActuator /\ endTS - lastSensorTS < 5
+
+trigger failure do emit `{"testCorrect": "false"}` on #terminate
+trigger end do emit `{"testCorrect": "%endCorrect"}` on #terminate
