@@ -153,7 +153,7 @@ class TestApplication(XAE):
         timestamp = int(time.time() - self.starttime)    
         actuator_request = self.actuator_requests[index % self.MAX_ROOMS] 
         self.logger.info(':sensor: index %d value %s' % (index, float(con)))
-        json_message = {'appname':'test1', 'type':'sensor', 'id':index, 'svalue':{'actual':float(con), 'threshold':20, 'timestamp':timestamp}}
+        json_message = {'appname':'test1', 'type':'sensor', 'id':index, 'svalue':{'actual':float(con), 'threshold':20}, 'timestamp':timestamp}
         r = requests.post(self.hostport, json=json_message)
         if float(con) > 20:
             timestamp = int(time.time() - self.starttime)    
