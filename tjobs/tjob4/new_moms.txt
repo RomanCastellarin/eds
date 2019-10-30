@@ -1,6 +1,6 @@
-pred issensor [i:1..10] := e.strcmp(appname, "test1") /\ e.strcmp(type,"sensor") /\ e.getnum(sensorid) = i
+pred issensor [i:1..10] := e.strcmp(appname, "test1") /\ e.strcmp(type,"sensor") /\ e.getnum(id) = i
 pred sensorhigh [i:1..10] := issensor_i /\ e.getnum(svalue.actual) > e.getnum(svalue.threshold)
-pred isactuator [i:1..10] := e.strcmp(appname, "test1") /\ e.strcmp(type,"actuator") /\ e.getnum(actuatorid) = i
+pred isactuator [i:1..10] := e.strcmp(appname, "test1") /\ e.strcmp(type,"actuator") /\ e.getnum(id) = i
 
 stream num sensorTS [i:1..10] := if issensor_i then e.getnum(timestamp)
 stream num lastSensorTS [i:1..10] := if issensor_i then last sensorTS_i
