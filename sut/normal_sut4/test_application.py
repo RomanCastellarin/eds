@@ -17,8 +17,8 @@ class TestApplication(XAE):
         self.sensor_temp_path = 'onem2m/TemperatureSensor/'
         self.actuator_simple_path = 'onem2m/SimpleActuator/'
 
-        self.NUM_PAIRS = 11
-        self.MAX_ROOMS = 10
+        self.NUM_PAIRS = 15
+        self.MAX_ROOMS = 100
         self.stored_reply = {}
         self.sensor_requests = []
         self.actuator_requests = []
@@ -148,9 +148,9 @@ class TestApplication(XAE):
         # actual logic is placed here
         actuator_request = self.actuator_requests[index % self.MAX_ROOMS] 
         self.logger.info(':sensor: index %d value %s' % (index, float(con)))
-        json_message = {'appname':'test1', 'type':'sensor', 'id':index, 'svalue':{'actual':int(float(con)), 'threshold':20}}
+        json_message = {'appname':'test1', 'type':'sensor', 'id':index, 'svalue':{'actual':float(con), 'threshold':20}}
         r = requests.post(self.hostport, json=json_message)
-        if int(float(con)) > 20:
+        if float(con) > 20:
             self.push_content(self.stored_reply[actuator_request]['conf']['in_path'], con)
             json_message = {'appname':'test1', 'type':'logic', 'id':index} 
             r = requests.post(self.hostport, json=json_message)
