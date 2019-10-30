@@ -1,3 +1,9 @@
+pred issensor := e.strcmp(appname, "test1") /\ e.strcmp(type,"sensor")
+
+stream num sensorTS := if issensor then e.getnum(svalue.actual)
+stream num lastSensorTS := if issensor then last sensorTS
+stream bool notTooOftenSensor := sensorTS - lastSensorTS > 5
+stream bool sensorhigh := issensor /\ e.getnum(svalue.actual) > e.getnum(svalue.threshold)
 stream bool must_end := e.strcmp(ourmessage,"STOP_TEST")
 trigger must_end do emit must_end on #terminate
 

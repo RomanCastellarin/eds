@@ -1,0 +1,35 @@
+pred issensor [i:1..10] := e.strcmp(appname, "test1") /\ e.strcmp(type,"sensor") /\ e.getnum(sensorid) = i
+pred sensorhigh [i:1..10] := issensor_i /\ e.getnum(svalue.actual) > e.getnum(svalue.threshold)
+pred isactuator [i:1..10] := e.strcmp(appname, "test1") /\ e.strcmp(type,"actuator") /\ e.getnum(actuatorid) = i
+
+stream num sensorTS [i:1..10] := if issensor_i then e.getnum(timestamp)
+stream num lastSensorTS [i:1..10] := if issensor_i then last sensorTS_i
+
+stream num sensorHighTS [i:1..10] := if sensorhigh_i then e.getnum(timestamp)
+stream num lastSensorHighTS [i:1..10] := if sensorhigh_i then last sensorHighTS_i
+stream num actuatorTS [i:1..10] := if isactuator_i then e.getnum(timestamp)
+stream num lastActuatorTS [i:1..10] := if isactuator_i then last actuatorTS_i
+stream bool lastWasActuator [i:1..10] := lastSensorHighTS_i < lastActuatorTS_i
+stream bool lastWasSensor [i:1..10] := lastActuatorTS_i < lastSensorHighTS_i
+
+stream bool checkStatusAct [i:1..10] := if isactuator_i then lastWasSensor_i
+stream bool checkStatusSens [i:1..10] := if sensorhigh_i then lastWasActuator_i
+stream bool checkQuickResponse [i:1..10] := if isactuator_i then actuatorTS_i < lastSensorHighTS_i + 4
+aggstream bool allCheckStatusAct := all checkStatusAct_i [i:1..10]
+aggstream bool allCheckStatusSens := all checkStatusSens_i [i:1..10]
+aggstream bool allCheckQuickResponse := all checkQuickResponse_i [i:1..10]
+
+stream bool notTooOftenSensor [i:1..10] := sensorTS_i - lastSensorTS_i > 4
+stream bool notTooSeldomSensor [i:1..10] := sensorTS_i - lastSensorTS_i < 6
+aggstream bool allSensorsNotTooOften := all notTooOftenSensor_i [i:1..10]
+aggstream bool allSensorsNotTooSeldom := all notTooSeldomSensor_i [i:1..10]
+
+stream bool failure := ~(allSensorsNotTooOften /\ allSensorsNotTooSeldom /\ allCheckStatusAct /\ allCheckStatusSens /\ allCheckQuickResponse)
+
+stream bool end := e.strcmp(ourmessage,"STOP_TEST")
+stream num endTS := if end then e.getnum(timestamp)
+stream bool endCorrect [i:1..10] := lastWasActuator_i /\ endTS - lastSensorTS_i < 6
+aggstream bool allEndCorrect := all endCorrect_i [i:1..10]
+
+trigger failure do emit `{"testCorrect": "false"}` on #terminate
+trigger end do emit `{"testCorrect": "%allEndCorrect"}` on #terminate
