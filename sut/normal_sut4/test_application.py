@@ -57,7 +57,7 @@ class TestApplication(XAE):
         response_path = self.actuator_simple_path + 'response'
         self.add_container_subscription(response_path, self.handle_simple_response)
 
-        gevent.spawn_later(2,self.send_requests)
+        gevent.spawn_later(5,self.send_requests)
         self.run_forever()
 
     def _on_shutdown(self):
