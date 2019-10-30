@@ -83,7 +83,7 @@ class MonitoringTest():
     print(response.content)
 
     # get the monitoring machines from the file
-    with open(os.environ['PWD'] + "/" + "monitoring_machines.txt") as f:
+    with open(os.environ['PWD'] + "/" + "new_moms.txt") as f:
       self.monMachines = f.read()
 
     # send the monitoring machines to EMS
@@ -102,6 +102,7 @@ class MonitoringTest():
     ws = create_connection(url)
     print "entering loop"
     self.condition = True
+    self.success = False
     while(self.condition):
       result = ws.recv()
       result = json.loads(result)
@@ -111,6 +112,8 @@ class MonitoringTest():
         #print result
         print "test result found"
         self.condition = False
+        if result.get('testCorrect'):
+            self.success = True
         break
 
       if "#test1sensor" in result["channels"]:
@@ -147,7 +150,7 @@ class MonitoringTest():
         variables.datavalues['test1']['actuator'][actuator_id]['lastsignaled'] = time.time()
         print "sensor has to trigger actuator %d" % actuator_id
 
-    return True
+    return self.success
 
 if __name__ == "__main__":
   print("Starting the test")
