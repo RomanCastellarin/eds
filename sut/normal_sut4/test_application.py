@@ -6,6 +6,7 @@ import os
 import signal
 import requests
 import json
+import time
 from functools import partial
 
 class TestApplication(XAE):
@@ -29,6 +30,7 @@ class TestApplication(XAE):
         self.hostport = 'http://' + self.ems + ":8181"
 
         self.status = {}
+        self.starttime = 0
 
     def __gen_ID(self):
         return uuid.uuid4().hex[:12]
@@ -70,6 +72,7 @@ class TestApplication(XAE):
     def send_requests(self):
         
         # World creation
+        self.starttime = time.time()
 
         # Register the application
         request_ID = str('app_' + self.__gen_ID())
@@ -140,19 +143,22 @@ class TestApplication(XAE):
         os.kill(os.getpid(), signal.SIGTERM)
 
     def handle_actuator_out(self, cnt, con, index):
+        timestamp = int(time.time() - self.starttime)    
         self.logger.info(':actuator: index %d value %s' % (index, float(con)))
-        json_message = {'appname':'test1', 'type':'actuator', 'id':index }
+        json_message = {'appname':'test1', 'type':'actuator', 'id':index, 'timestamp':timestamp }
         r = requests.post(self.hostport, json=json_message)
 
     def handle_temperature_sensor(self, cnt, con, index):
         # actual logic is placed here
+        timestamp = int(time.time() - self.starttime)    
         actuator_request = self.actuator_requests[index % self.MAX_ROOMS] 
         self.logger.info(':sensor: index %d value %s' % (index, float(con)))
-        json_message = {'appname':'test1', 'type':'sensor', 'id':index, 'svalue':{'actual':float(con), 'threshold':20}}
+        json_message = {'appname':'test1', 'type':'sensor', 'id':index, 'svalue':{'actual':float(con), 'threshold':20, 'timestamp':timestamp}}
         r = requests.post(self.hostport, json=json_message)
         if float(con) > 20:
+            timestamp = int(time.time() - self.starttime)    
             self.push_content(self.stored_reply[actuator_request]['conf']['in_path'], con)
-            json_message = {'appname':'test1', 'type':'logic', 'id':index} 
+            json_message = {'appname':'test1', 'type':'logic', 'id':index, 'timestamp':timestamp} 
             r = requests.post(self.hostport, json=json_message)
 
     def handle_orch_response(self, cnt, con):
