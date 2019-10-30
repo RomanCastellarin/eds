@@ -54,7 +54,7 @@ actuatorSignalSuite = unittest.TestLoader().loadTestsFromTestCase(TestActuatorSi
 class MonitoringTest():
   def __init__(self):
 
-    self.NUM_PAIRS = 10
+    self.NUM_PAIRS = 100
 
     for pair_id in range(self.NUM_PAIRS):
         variables.datavalues['test1']['sensor'][pair_id] = {
