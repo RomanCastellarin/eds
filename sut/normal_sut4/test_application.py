@@ -57,7 +57,7 @@ class TestApplication(XAE):
         response_path = self.actuator_simple_path + 'response'
         self.add_container_subscription(response_path, self.handle_simple_response)
 
-        gevent.spawn_later(5,self.send_requests)
+        gevent.spawn_later(10,self.send_requests)
         self.run_forever()
 
     def _on_shutdown(self):
@@ -140,14 +140,14 @@ class TestApplication(XAE):
         os.kill(os.getpid(), signal.SIGTERM)
 
     def handle_actuator_out(self, cnt, con, index):
-        self.logger.info(':actuator: index %d value %d' % (index, float(con)))
+        self.logger.info(':actuator: index %d value %s' % (index, float(con)))
         json_message = {'appname':'test1', 'type':'actuator', 'id':index }
         r = requests.post(self.hostport, json=json_message)
 
     def handle_temperature_sensor(self, cnt, con, index):
         # actual logic is placed here
         actuator_request = self.actuator_requests[index % self.MAX_ROOMS] 
-        self.logger.info(':sensor: index %d value %d' % (index, float(con)))
+        self.logger.info(':sensor: index %d value %s' % (index, float(con)))
         json_message = {'appname':'test1', 'type':'sensor', 'id':index, 'svalue':{'actual':int(float(con)), 'threshold':20}}
         r = requests.post(self.hostport, json=json_message)
         if int(float(con)) > 20:
