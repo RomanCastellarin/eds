@@ -20,8 +20,8 @@ class TestApplication(XAE):
         self.NUM_PAIRS = 3
         self.MAX_ROOMS = 10
         self.stored_reply = {}
-        self.sensor_requests = [None] * self.MAX_ROOMS
-        self.actuator_requests = [None] * self.MAX_ROOMS
+        self.sensor_requests = []
+        self.actuator_requests = []
         self.app_ID = "testapplication"
 
         self.app_name = "TestApplication"
@@ -80,15 +80,14 @@ class TestApplication(XAE):
         self.logger.info('sent request to register application')
         self.__wait_event()
 
-        # register NUM_PAIRS pairs of temp sensors - actuators
-        for pair_index in range(self.NUM_PAIRS):
-            index = pair_index % self.MAX_ROOMS
+        # Register NUM_PAIRS pairs of temp sensors - actuators
+        for _ in range(self.NUM_PAIRS):
             # sensor
             request_ID = str('sensor_temp_' + self.__gen_ID())
             self.__set_event(request_ID)
             request = [{'register': {'sensor': {'app_ID': self.app_ID, 'request_ID': request_ID, 'sensor_type': 'temperature'}}}]
             self.push_content(request_path, request)
-            self.sensor_requests[index] = request_ID
+            self.sensor_requests.append(request_ID)
             self.logger.info('sent request to register sensor')
             self.__wait_event()
             # actuator
@@ -96,13 +95,12 @@ class TestApplication(XAE):
             self.__set_event(request_ID)
             request = [{'register': {'actuator': {'app_ID': self.app_ID, 'request_ID': request_ID, 'actuator_type': 'simple'}}}]
             self.push_content(request_path, request)
-            self.actuator_requests[index] = request_ID
+            self.actuator_requests.append(request_ID)
             self.logger.info('sent request to register actuator')
             self.__wait_event()
 
         # Set up pairs
-        for pair_index in range(self.NUM_PAIRS):
-            index = pair_index % self.MAX_ROOMS
+        for index in range(self.NUM_PAIRS):
             # switch on sensor
             request_ID = str('modify_' + self.__gen_ID())
             self.__set_event(request_ID)
@@ -122,14 +120,16 @@ class TestApplication(XAE):
 
         self.logger.info('System should be established...')
 
-        for pair_index in range(self.NUM_PAIRS):
-            index = pair_index % self.MAX_ROOMS
+        # Subscribe to events
+        for index in range(self.NUM_PAIRS):
+            # sensor read
             sensor_request = self.sensor_requests[index] 
             self.add_container_subscription(self.stored_reply[sensor_request]['conf']['path'],
-                partial(self.handle_temperature_sensor, index=pair_index ))
+                partial(self.handle_temperature_sensor, index=index ))
+            # actuator output
             actuator_request = self.actuator_requests[index]
             self.add_container_subscription(self.stored_reply[actuator_request]['conf']['out_path'],
-               partial(self.handle_actuator_out, index=pair_index))
+               partial(self.handle_actuator_out, index=index))
 
         #stop the tjob after 1 minute
         gevent.spawn_later(60, self.app_shutdown)
@@ -140,18 +140,14 @@ class TestApplication(XAE):
         os.kill(os.getpid(), signal.SIGTERM)
 
     def handle_actuator_out(self, cnt, con, index):
-        self.logger.info('handling actuator out n. %d' % index)
-        self.logger.info(':actuator:' + con)
-        self.logger.info(cnt)
+        self.logger.info(':actuator: index %d value %d' % (index, float(con)))
         json_message = {'appname':'test1', 'type':'actuator', 'id':index }
         r = requests.post(self.hostport, json=json_message)
 
     def handle_temperature_sensor(self, cnt, con, index):
         # actual logic is placed here
         actuator_request = self.actuator_requests[index % self.MAX_ROOMS] 
-        self.logger.info('handling temp sensor n. %d' % index)
-        self.logger.info(':sensor:'+ con)
-        self.logger.info(cnt)
+        self.logger.info(':sensor: index %d value %d' % (index, float(con)))
         json_message = {'appname':'test1', 'type':'sensor', 'id':index, 'svalue':{'actual':int(float(con)), 'threshold':20}}
         r = requests.post(self.hostport, json=json_message)
         if int(float(con)) > 20:
@@ -161,8 +157,8 @@ class TestApplication(XAE):
 
     def handle_orch_response(self, cnt, con):
         reply = con
-        self.logger.info('orch handler')
-        # if the program was waiting for the reply
+        self.logger.info('EDS Orch response')
+        # if the program was waiting for the reply, notify it
         if self.status.get('request'):
             if self.status.get('request') == reply.get('request_ID'):
                 self.status['event'].set()
@@ -183,11 +179,12 @@ class TestApplication(XAE):
             self.logger.info(reply)
 
     def handle_temp_response(self, cnt, reply):
-        self.logger.info('sensor handler')
-        # if the program was waiting for the reply
+        self.logger.info('EDS sensor response')
+        # if the program was waiting for the reply, notify it
         if self.status.get('request'):
             if self.status.get('request') == reply.get('request_ID'):
                 self.status['event'].set()
+        # check if reply is for this application
         if reply.get('app_ID') == self.app_ID:
             request_ID = reply['request_ID']
             if reply.get('result') == 'SUCCESS':
@@ -201,11 +198,12 @@ class TestApplication(XAE):
             self.logger.info(reply)
 
     def handle_simple_response(self, cnt, reply):
-        self.logger.info('actuator handler')
-        # if the program was waiting for the reply
+        self.logger.info('EDS actuator response')
+        # if the program was waiting for the reply, notify it
         if self.status.get('request'):
             if self.status.get('request') == reply.get('request_ID'):
                 self.status['event'].set()
+        # check if reply is for this application
         if reply.get('app_ID') == self.app_ID:
             request_ID = reply['request_ID']
             if reply.get('result') == 'SUCCESS':
