@@ -72,6 +72,9 @@ class MonitoringTest():
 
 if __name__ == "__main__":
   print("Starting the test")
-  edstest = MonitoringTest()
+  try:
+      edstest = MonitoringTest()
+  except Exception, e:
+    print e
   print("Ending the test")
 
