@@ -62,7 +62,7 @@ class MonitoringTest():
       if "#terminate" in result["channels"]:
         print "test result found"
         self.condition = False
-        if result.get('testCorrect'):
+        if str(result.get('testCorrect', '')).lower() == 'true':
             #time.sleep(60)
             testSuccess = True
         break
