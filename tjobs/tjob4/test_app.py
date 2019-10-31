@@ -65,9 +65,10 @@ class MonitoringTest():
         print result.get('testCorrect')
         if str(result.get('testCorrect', '')).lower() == 'true':
             #time.sleep(60)
+            print 'ITS CORRECT'
             testSuccess = True
         break
-
+    print testSuccess
     xmlrunner.XMLTestRunner(verbosity=0, output='/tmp/test-reports').run(testSuite) 
     return True
 
