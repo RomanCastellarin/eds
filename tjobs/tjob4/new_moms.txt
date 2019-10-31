@@ -34,7 +34,7 @@ aggstream bool allEndCorrect := all endCorrect_i [i:0..9]
 stream bool interesting [i:0..9] := issensor_i \/ isactuator_i
 aggstream bool anyInteresting := any interesting_i [i:0..9] 
 
-trigger anyInteresting emit `{"i0": "%interesting_0", "i1": "%interesting_1", "i2": "%interesting_2", "i3": "%interesting_3", "i4": "%interesting_4", "i5": "%interesting_5", "i6": "%interesting_6", "i7": "%interesting_7", "i8": "%interesting_8", "i9": "%interesting_9" }` on #websocket
+trigger anyInteresting do emit `{"i0": "%interesting_0", "i1": "%interesting_1", "i2": "%interesting_2", "i3": "%interesting_3", "i4": "%interesting_4", "i5": "%interesting_5", "i6": "%interesting_6", "i7": "%interesting_7", "i8": "%interesting_8", "i9": "%interesting_9" }` on #websocket
 
 trigger failure do emit `{"pairID": "%pepe", "testCorrect": "false", "endingType": "shortcut", "allSensorsNotTooOften":"%allSensorsNotTooOften", "allSensorsNotTooSeldom":"%allSensorsNotTooSeldom", "allCheckStatusAct":"%allCheckStatusAct", "allCheckStatusSens": "%allCheckStatusSens", "allCheckQuickResponse": "%allCheckQuickResponse"}` on #terminate
 trigger end do emit `{"testCorrect": "%allEndCorrect"}` on #terminate
