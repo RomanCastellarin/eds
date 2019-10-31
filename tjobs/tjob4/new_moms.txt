@@ -32,8 +32,8 @@ stream bool endCorrect [i:0..9] := lastWasActuator_i /\ endTS - lastSensorTS_i <
 aggstream bool allEndCorrect := all endCorrect_i [i:0..9]
 
 stream num pairIDsT [i:0..9] = if issensor_i \/ isactuator_i then i
-stream num pairIDsF [i:0..9] = if ~(issensor_i \/ isactuator_i) then 0
-stream num pairIDs  [i:0..9] = pairIDsT + pairIDsF
+stream num pairIDsF [i:0..9] = if ~( issensor_i \/ isactuator_i ) then 0
+stream num pairIDs  [i:0..9] = pairIDsT_i + pairIDsF_i
 
 stream num pairID = pairIDs_0 + pairIDs_1 + pairIDs_2 + pairIDs_3 + pairIDs_4 + pairIDs_5 + pairIDs_6 + pairIDs_7 + pairIDs_8 + pairIDs_9
 
