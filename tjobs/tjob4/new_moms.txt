@@ -10,7 +10,7 @@ stream num lastSensorHighTS [i:0..9] := if sensorhigh_i then last sensorHighTS_i
 stream num actuatorTS [i:0..9] := if isactuator_i then e.getnum(timestamp)
 stream num lastActuatorTS [i:0..9] := if isactuator_i then last actuatorTS_i
 stream bool lastWasActuator [i:0..9] := lastSensorHighTS_i < lastActuatorTS_i
-stream bool lastWasSensor [i:0..9] := lastActuatorTS_i < lastSensorHighTS_i
+stream bool lastWasSensor [i:0..9] := lastActuatorTS_i < SensorHighTS_i
 
 stream bool checkStatusAct [i:0..9] := if isactuator_i then lastWasSensor_i
 stream bool checkStatusSens [i:0..9] := if sensorhigh_i then lastWasActuator_i
@@ -34,5 +34,5 @@ aggstream bool allEndCorrect := all endCorrect_i [i:0..9]
 
 stream num tiempo := e.getnum(timestamp)
 
-trigger failure do emit `{"tiempo" : "%tiempo", "testCorrect": false, "endingType": "shortcut", "allSensorsNotTooOften":"%allSensorsNotTooOften", "allSensorsNotTooSeldom":"%allSensorsNotTooSeldom", "allCheckStatusAct":"%allCheckStatusAct", "allCheckStatusSens": "%allCheckStatusSens", "allCheckQuickResponse": "%allCheckQuickResponse"}` on #terminate
+trigger failure do emit `{"tiempo" : "%tiempo", "": "", "testCorrect": false, "endingType": "shortcut", "allSensorsNotTooOften":"%allSensorsNotTooOften", "allSensorsNotTooSeldom":"%allSensorsNotTooSeldom", "allCheckStatusAct":"%allCheckStatusAct", "allCheckStatusSens": "%allCheckStatusSens", "allCheckQuickResponse": "%allCheckQuickResponse"}` on #terminate
 trigger end do emit `{"testCorrect": "%allEndCorrect"}` on #terminate
