@@ -34,5 +34,5 @@ aggstream bool allEndCorrect := all endCorrect_i [i:0..9]
 
 stream num tiempo := e.getnum(timestamp)
 
-trigger failure do emit `{"tiempo" : "%tiempo", "": "", "testCorrect": false, "endingType": "shortcut", "allSensorsNotTooOften":"%allSensorsNotTooOften", "allSensorsNotTooSeldom":"%allSensorsNotTooSeldom", "allCheckStatusAct":"%allCheckStatusAct", "allCheckStatusSens": "%allCheckStatusSens", "allCheckQuickResponse": "%allCheckQuickResponse"}` on #terminate
+trigger failure do emit `{"tiempo" : "%tiempo", "testCorrect": false, "endingType": "shortcut", "allSensorsNotTooOften":"%allSensorsNotTooOften", "allSensorsNotTooSeldom":"%allSensorsNotTooSeldom", "allCheckStatusAct":"%allCheckStatusAct", "allCheckStatusSens": "%allCheckStatusSens", "allCheckQuickResponse": "%allCheckQuickResponse"}` on #terminate
 trigger end do emit `{"testCorrect": "%allEndCorrect"}` on #terminate
