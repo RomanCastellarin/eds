@@ -6,6 +6,7 @@ from websocket import create_connection
 import sys
 import unittest
 import xmlrunner
+import time
  
 testSuccess = False
    
@@ -59,6 +60,7 @@ class MonitoringTest():
         print "test result found"
         self.condition = False
         if result.get('testCorrect') == 'true':
+            time.sleep(60)
             testSuccess = True
         break
 
