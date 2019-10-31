@@ -45,6 +45,9 @@ class MonitoringTest():
     print(response.content)
 
     print("after sending requests")
+
+    sys.stdout.flush()
+
     self.start_test()
 
   def start_test(self):
