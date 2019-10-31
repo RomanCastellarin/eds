@@ -14,7 +14,7 @@ stream bool lastWasSensor [i:0..9] := lastActuatorTS_i < sensorHighTS_i
 
 stream bool checkStatusAct [i:0..9] := if isactuator_i then lastWasSensor_i
 stream bool checkStatusSens [i:0..9] := if sensorhigh_i then lastWasActuator_i
-stream bool checkQuickResponse [i:0..9] := if isactuator_i then actuatorTS_i < lastSensorHighTS_i + 4
+stream bool checkQuickResponse [i:0..9] := if isactuator_i then actuatorTS_i < sensorHighTS_i + 4
 aggstream bool allCheckStatusAct := all checkStatusAct_i [i:0..9]
 aggstream bool allCheckStatusSens := all checkStatusSens_i [i:0..9]
 aggstream bool allCheckQuickResponse := all checkQuickResponse_i [i:0..9]
@@ -24,7 +24,7 @@ stream bool notTooSeldomSensor [i:0..9] := sensorTS_i - lastSensorTS_i < 6
 aggstream bool allSensorsNotTooOften := all notTooOftenSensor_i [i:0..9]
 aggstream bool allSensorsNotTooSeldom := all notTooSeldomSensor_i [i:0..9]
 
-stream bool failure := ~(allSensorsNotTooOften /\ allSensorsNotTooSeldom /\ allCheckStatusAct /\ allCheckStatusSens) 
+stream bool failure := ~(allSensorsNotTooOften /\ allSensorsNotTooSeldom /\ allCheckStatusAct /\ allCheckStatusSens /\ allCheckQuickResponse) 
 
 stream bool end := e.strcmp(ourmessage,"STOP_TEST")
 stream num endTS := if end then e.getnum(timestamp)
