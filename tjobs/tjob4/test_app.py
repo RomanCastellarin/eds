@@ -58,7 +58,7 @@ class MonitoringTest():
       if "#terminate" in result["channels"]:
         print "test result found"
         self.condition = False
-        if result.get('testCorrect'):
+        if result.get('testCorrect') == 'true':
             testSuccess = True
         break
 
