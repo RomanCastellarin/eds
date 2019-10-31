@@ -31,8 +31,8 @@ stream num endTS := if end then e.getnum(timestamp)
 stream bool endCorrect [i:0..9] := lastWasActuator_i /\ endTS - lastSensorTS_i < 6
 aggstream bool allEndCorrect := all endCorrect_i [i:0..9]
 
-//stream num pairIDs [i:0..9] := if issensor_i \/ isactuator_i then i else 0
-// stream num pairID := pairIDs_0 + pairIDs_1 + pairIDs_2 + pairIDs_3 + pairIDs_4 + pairIDs_5 + pairIDs_6 + pairIDs_7 + pairIDs_8 + pairIDs_9
+/*stream num pairIDs [i:0..9] := if issensor_i \/ isactuator_i then i else 0
+stream num pairID := pairIDs_0 + pairIDs_1 + pairIDs_2 + pairIDs_3 + pairIDs_4 + pairIDs_5 + pairIDs_6 + pairIDs_7 + pairIDs_8 + pairIDs_9*/
 
 stream num pepe := if false then 5 else 17
 
