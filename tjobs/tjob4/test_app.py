@@ -66,6 +66,7 @@ class MonitoringTest():
         if str(result.get('testCorrect', '')).lower() == 'true':
             #time.sleep(60)
             print 'ITS CORRECT'
+            global testSuccess
             testSuccess = True
         break
     print testSuccess
