@@ -19,7 +19,7 @@ class TestApplication(XAE):
         self.actuator_simple_path = 'onem2m/SimpleActuator/'
 
         self.NUM_PAIRS = 10
-        self.MAX_ROOMS = 10
+        self.MAX_ROOMS = 8
         self.stored_reply = {}
         self.sensor_requests = []
         self.actuator_requests = []
@@ -149,7 +149,6 @@ class TestApplication(XAE):
         r = requests.post(self.hostport, json=json_message)
 
     def handle_temperature_sensor(self, cnt, con, index):
-        # actual logic is placed here
         timestamp = time.time() - self.starttime
         actuator_request = self.actuator_requests[index % self.MAX_ROOMS] 
         self.logger.info(':sensor: index %d value %s' % (index, float(con)))
