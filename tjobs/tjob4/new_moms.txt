@@ -31,8 +31,6 @@ stream num endTS := if end then e.getnum(timestamp)
 stream bool endCorrect [i:0..9] := lastWasActuator_i /\ endTS - lastSensorTS_i < 6
 aggstream bool allEndCorrect := all endCorrect_i [i:0..9]
 
+trigger failure do emit `{"endTimestamp" : "%endTS", "testCorrect": false, "endingType": "shortcut", "allSensorsNotTooOften":"%allSensorsNotTooOften", "allSensorsNotTooSeldom":"%allSensorsNotTooSeldom", "allCheckStatusAct":"%allCheckStatusAct", "allCheckStatusSens": "%allCheckStatusSens", "allCheckQuickResponse": "%allCheckQuickResponse"}` on #terminatetest
+trigger end do emit `{"testCorrect": "%allEndCorrect"}` on #terminatetest
 
-stream num tiempo := e.getnum(timestamp)
-
-trigger failure do emit `{"tiempo" : "%tiempo", "testCorrect": false, "endingType": "shortcut", "allSensorsNotTooOften":"%allSensorsNotTooOften", "allSensorsNotTooSeldom":"%allSensorsNotTooSeldom", "allCheckStatusAct":"%allCheckStatusAct", "allCheckStatusSens": "%allCheckStatusSens", "allCheckQuickResponse": "%allCheckQuickResponse"}` on #terminate
-trigger end do emit `{"testCorrect": "%allEndCorrect"}` on #terminate

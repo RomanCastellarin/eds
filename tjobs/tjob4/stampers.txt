@@ -1,9 +1,1 @@
-when e.tag(#testresult) do #websocket
-when e.tag(#terminate) do #websocket
-when e.tag(#test1sensor) do #websocket
-when e.tag(#test1actuator) do #websocket
-when e.tag(#test1logic) do #websocket
-when e.tag(#test1) do #websocket
-
-when e.tag(#test1sensortrigger) do #websocket
-when e.tag(#test1actuatortrigger) do #websocket
+when e.tag(#terminatetest) do #websocket

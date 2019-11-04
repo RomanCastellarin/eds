@@ -59,7 +59,7 @@ class MonitoringTest():
       result = json.loads(result)
       print result
       
-      if "#terminate" in result["channels"]:
+      if "#terminatetest" in result["channels"]:
         print "test result found"
         self.condition = False
         print result.get('testCorrect')
