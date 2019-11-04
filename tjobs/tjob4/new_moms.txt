@@ -32,5 +32,5 @@ stream bool endCorrect [i:0..9] := lastWasActuator_i /\ endTS - lastSensorTS_i <
 aggstream bool allEndCorrect := all endCorrect_i [i:0..9]
 
 trigger failure do emit `{"endTimestamp" : "%endTS", "testCorrect": false, "endingType": "shortcut", "allSensorsNotTooOften":"%allSensorsNotTooOften", "allSensorsNotTooSeldom":"%allSensorsNotTooSeldom", "allCheckStatusAct":"%allCheckStatusAct", "allCheckStatusSens": "%allCheckStatusSens", "allCheckQuickResponse": "%allCheckQuickResponse"}` on #terminatetest
-trigger end do emit `{"testCorrect": "%allEndCorrect"}` on #terminatetest
+trigger end do emit `{"testCorrect" : "testing"}` on #terminatetest
 
