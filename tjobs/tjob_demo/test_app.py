@@ -37,7 +37,7 @@ class MonitoringTest():
 
     # get the monitoring machines from the file
     NUM_PAIRS = os.environ["TESTAPP_NUM_PAIRS"]
-    with open(os.environ['PWD'] + "/" + "new_moms" + NUM_PAIRS + ".txt") as f:
+    with open(os.environ['PWD'] + "/" + "monitoring_machines_" + NUM_PAIRS + ".txt") as f:
       self.monMachines = f.read()
 
     # send the monitoring machines to EMS
