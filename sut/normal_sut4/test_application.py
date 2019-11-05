@@ -18,8 +18,8 @@ class TestApplication(XAE):
         self.sensor_temp_path = 'onem2m/TemperatureSensor/'
         self.actuator_simple_path = 'onem2m/SimpleActuator/'
 
-        self.NUM_PAIRS = 30
-        self.MAX_ROOMS = 30
+        self.NUM_PAIRS = 10
+        self.MAX_ROOMS = 10
         self.stored_reply = {}
         self.sensor_requests = []
         self.actuator_requests = []
@@ -155,10 +155,7 @@ class TestApplication(XAE):
         json_message = {'appname':'test1', 'type':'sensor', 'id':index, 'svalue':{'actual':float(con), 'threshold':20}, 'timestamp':timestamp}
         r = requests.post(self.hostport, json=json_message)
         if float(con) > 20:
-            timestamp = time.time() - self.starttime
             self.push_content(self.stored_reply[actuator_request]['conf']['in_path'], con)
-            json_message = {'appname':'test1', 'type':'logic', 'id':index, 'timestamp':timestamp} 
-            r = requests.post(self.hostport, json=json_message)
 
     def handle_orch_response(self, cnt, con):
         reply = con
