@@ -15,23 +15,28 @@ stream bool lastWasSensor [i:0..9] := lastActuatorTS_i < sensorHighTS_i
 stream bool checkStatusAct [i:0..9] := if isactuator_i then lastWasSensor_i
 stream bool checkStatusSens [i:0..9] := if sensorhigh_i then lastWasActuator_i
 stream bool checkQuickResponse [i:0..9] := if isactuator_i then actuatorTS_i < sensorHighTS_i + 4
-aggstream bool allCheckStatusAct := all checkStatusAct_i [i:0..9]
-aggstream bool allCheckStatusSens := all checkStatusSens_i [i:0..9]
-aggstream bool allCheckQuickResponse := all checkQuickResponse_i [i:0..9]
+stream bool defaultedStatusAct [i:0..9] := if is_init checkStatusAct_i then checkStatusAct_i else true
+stream bool defaultedStatusSens [i:0..9] := if is_init checkStatusSens_i then checkStatusSens_i else true
+stream bool defaultedQuickResponse [i:0..9] := if is_init checkQuickResponse_i then checkQuickResponse_i else true
+aggstream bool allCheckStatusAct := all defaultedStatusAct_i [i:0..9]
+aggstream bool allCheckStatusSens := all defaultedStatusSens_i [i:0..9]
+aggstream bool allCheckQuickResponse := all defaultedQuickResponse_i [i:0..9]
 
 stream bool notTooOftenSensor [i:0..9] := sensorTS_i - lastSensorTS_i > 4
+stream bool defaultedNotTooOftenSensor [i:0..9] := if is_init notTooOftenSensor_i then notTooOftenSensor_i else true
 stream bool notTooSeldomSensor [i:0..9] := sensorTS_i - lastSensorTS_i < 6
-aggstream bool allSensorsNotTooOften := all notTooOftenSensor_i [i:0..9]
-aggstream bool allSensorsNotTooSeldom := all notTooSeldomSensor_i [i:0..9]
+stream bool defaultedNotTooSeldomSensor [i:0..9] := if is_init notTooSeldomSensor_i then notTooSeldomSensor_i else true
+aggstream bool allSensorsNotTooOften := all defaultedNotTooOftenSensor_i [i:0..9]
+aggstream bool allSensorsNotTooSeldom := all defaultedNotTooSeldomSensor_i [i:0..9]
 
 stream bool failure := ~(allSensorsNotTooOften /\ allSensorsNotTooSeldom /\ allCheckStatusAct /\ allCheckStatusSens /\ allCheckQuickResponse) 
 
 stream bool end := e.strcmp(ourmessage,"STOP_TEST")
 stream num endTS := if end then e.getnum(timestamp)
 
-stream bool checkEndQuickResponse [i:0..9] := endTS - sensorHighTS_i < 4
-stream bool endCorrect [i:0..9] := checkEndQuickResponse_i \/ true
-aggstream bool allEndCorrect := all endCorrect_i [i:0..9]
+stream bool endCorrect [i:0..9] := endTS - sensorTS_i < 6
+stream bool defaultedEndCorrect [i:0..9] := if is_init endCorrect_i then endCorrect_i else true
+aggstream bool allEndCorrect := all defaultedEndCorrect_i [i:0..9]
 
 trigger failure do emit `{"endTimestamp" : "%endTS", "testCorrect": false, "endingType": "shortcut", "allSensorsNotTooOften":"%allSensorsNotTooOften", "allSensorsNotTooSeldom":"%allSensorsNotTooSeldom", "allCheckStatusAct":"%allCheckStatusAct", "allCheckStatusSens": "%allCheckStatusSens", "allCheckQuickResponse": "%allCheckQuickResponse"}` on #terminatetest
 trigger end do emit `{"testCorrect" : "testing", "veredict" : "%allEndCorrect"}` on #terminatetest
