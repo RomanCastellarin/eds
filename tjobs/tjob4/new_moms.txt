@@ -40,7 +40,7 @@ stream bool endQuickResponse [i:0..9] := endTS - sensorHighTS_i < 4
 stream bool defaultedEndQuickResponse [i:0..9] := if is_init endQuickResponse_i then endQuickResponse_i else true
 stream bool defaultedEndStatusAct [i:0..9] := if is_init actuatorTS_i then endTS - actuatorTS_i < 4 else false
 stream bool endCorrect [i:0..9] := defaultedEndNotTooSeldom_i /\ (defaultedEndQuickResponse_i \/ defaultedEndStatusAct_i)
-aggstream bool allEndCorrect := all defaultedEndCorrect_i [i:0..9]
+aggstream bool allEndCorrect := all endCorrect_i [i:0..9]
 
 trigger failure do emit `{"endTimestamp" : "%endTS", "testCorrect": false, "endingType": "shortcut", "allSensorsNotTooOften": "%allSensorsNotTooOften", "allSensorsNotTooSeldom": "%allSensorsNotTooSeldom", "allCheckStatusAct": "%allCheckStatusAct",  "allCheckStatusSens": "%allCheckStatusSens",  "allCheckQuickResponse": "%allCheckQuickResponse"}` on #terminatetest
 trigger end do emit `{"testCorrect" : "%allEndCorrect"}` on #terminatetest
