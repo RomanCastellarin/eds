@@ -38,6 +38,13 @@ stream bool endCorrect [i:0..9] := endTS - sensorTS_i < 6
 stream bool defaultedEndCorrect [i:0..9] := if is_init endCorrect_i then endCorrect_i else true
 aggstream bool allEndCorrect := all defaultedEndCorrect_i [i:0..9]
 
-trigger failure do emit `{"endTimestamp" : "%endTS", "testCorrect": false, "endingType": "shortcut", "allSensorsNotTooOften":"%allSensorsNotTooOften", "allSensorsNotTooSeldom":"%allSensorsNotTooSeldom", "allCheckStatusAct":"%allCheckStatusAct", "allCheckStatusSens": "%allCheckStatusSens", "allCheckQuickResponse": "%allCheckQuickResponse"}` on #terminatetest
-trigger end do emit `{"testCorrect" : "testing", "veredict" : "%allEndCorrect"}` on #terminatetest
+trigger failure do emit `{"endTimestamp" : "%endTS",
+                          "testCorrect": false,
+                          "endingType": "shortcut",
+                          "allSensorsNotTooOften": "%allSensorsNotTooOften",
+                          "allSensorsNotTooSeldom": "%allSensorsNotTooSeldom",
+                          "allCheckStatusAct": "%allCheckStatusAct", 
+                          "allCheckStatusSens": "%allCheckStatusSens", 
+                          "allCheckQuickResponse": "%allCheckQuickResponse"}` on #terminatetest
+trigger end do emit `{"testCorrect" : "%allEndCorrect"}` on #terminatetest
 
