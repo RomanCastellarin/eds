@@ -42,6 +42,8 @@ stream bool defaultedEndStatusAct [i:0..5] := if is_init actuatorTS_i then endTS
 stream bool endCorrect [i:0..5] := defaultedEndNotTooSeldom_i /\ (defaultedEndQuickResponse_i \/ defaultedEndStatusAct_i)
 aggstream bool allEndCorrect := all endCorrect_i [i:0..5]
 
-trigger failure do emit `{"endTimestamp" : "%endTS", "testCorrect": false, "endingType": "shortcut", "allSensorsNotTooOften": "%allSensorsNotTooOften", "allSensorsNotTooSeldom": "%allSensorsNotTooSeldom", "allCheckStatusAct": "%allCheckStatusAct",  "allCheckStatusSens": "%allCheckStatusSens",  "allCheckQuickResponse": "%allCheckQuickResponse"}` on #terminatetest
+stream num currentID := e.getnum(id)
+
+trigger failure do emit `{"currentID": "%currentID", "endTimestamp" : "%endTS", "testCorrect": false, "endingType": "shortcut", "allSensorsNotTooOften": "%allSensorsNotTooOften", "allSensorsNotTooSeldom": "%allSensorsNotTooSeldom", "allCheckStatusAct": "%allCheckStatusAct",  "allCheckStatusSens": "%allCheckStatusSens",  "allCheckQuickResponse": "%allCheckQuickResponse"}` on #terminatetest
 trigger end do emit `{"endTimestamp" : "%endTS", "testCorrect" : "%allEndCorrect", "endingType": "stop test"}` on #terminatetest
 
