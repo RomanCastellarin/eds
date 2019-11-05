@@ -45,7 +45,6 @@ class MonitoringTest():
     print(response.content)
 
     print("after sending requests")
-
     sys.stdout.flush()
 
     self.start_test()
@@ -62,10 +61,7 @@ class MonitoringTest():
       if "#terminatetest" in result["channels"]:
         print "test result found"
         self.condition = False
-        print result.get('testCorrect')
         if str(result.get('testCorrect', '')).lower() == 'true':
-            #time.sleep(60)
-            print 'ITS CORRECT'
             global testSuccess
             testSuccess = True
         break

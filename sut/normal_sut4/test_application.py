@@ -19,7 +19,7 @@ class TestApplication(XAE):
         self.actuator_simple_path = 'onem2m/SimpleActuator/'
 
         self.NUM_PAIRS = 10
-        self.MAX_ROOMS = 9
+        self.MAX_ROOMS = 10
         self.stored_reply = {}
         self.sensor_requests = []
         self.actuator_requests = []
