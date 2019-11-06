@@ -44,6 +44,6 @@ aggstream bool allEndCorrect := all endCorrect_i [i:0..9]
 
 stream num currentID := e.getnum(id)
 
-trigger failure do emit `{ "currentID": "%currentID" "endTimestamp" : "%endTS", "testCorrect": false, "endingType": "shortcut", "allSensorsNotTooOften": "%allSensorsNotTooOften", "allSensorsNotTooSeldom": "%allSensorsNotTooSeldom", "allCheckStatusAct": "%allCheckStatusAct",  "allCheckStatusSens": "%allCheckStatusSens",  "allCheckQuickResponse": "%allCheckQuickResponse"}` on #terminatetest
+trigger failure do emit `{ "currentID": "%currentID", "endTimestamp" : "%endTS", "testCorrect": false, "endingType": "shortcut", "allSensorsNotTooOften": "%allSensorsNotTooOften", "allSensorsNotTooSeldom": "%allSensorsNotTooSeldom", "allCheckStatusAct": "%allCheckStatusAct",  "allCheckStatusSens": "%allCheckStatusSens",  "allCheckQuickResponse": "%allCheckQuickResponse"}` on #terminatetest
 trigger end do emit `{"endTimestamp" : "%endTS", "testCorrect" : "%allEndCorrect", "endingType": "stop test"}` on #terminatetest
 
