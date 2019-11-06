@@ -141,6 +141,7 @@ class TestApplication(XAE):
         timestamp = time.time() - self.starttime
         json_message = {'ourmessage':'STOP_TEST', 'timestamp':timestamp}
         r = requests.post(self.hostport, json=json_message)
+        gevent.sleep(1)
         os.kill(os.getpid(), signal.SIGTERM)
 
     def handle_actuator_out(self, cnt, con, index):
