@@ -48,15 +48,15 @@ class TestApplication(XAE):
 
         # subscribe to the EDS orch response
         response_path = self.orch_path + 'response'
-        self.add_container_subscription(response_path, self.handle_orch_response)
+        self.add_container_subscription(response_path, self.handle_response)
 
         # subscribe to temperature sensor response
         response_path = self.sensor_temp_path + 'response'
-        self.add_container_subscription(response_path, self.handle_temp_response)
+        self.add_container_subscription(response_path, self.handle_response)
 
         # subscribe to the simple actuator response
         response_path = self.actuator_simple_path + 'response'
-        self.add_container_subscription(response_path, self.handle_simple_response)
+        self.add_container_subscription(response_path, self.handle_response)
 
         gevent.spawn_later(10,self.send_requests)
         self.run_forever()
@@ -157,13 +157,9 @@ class TestApplication(XAE):
         if float(con) > 20:
             self.push_content(self.stored_reply[actuator_request]['conf']['in_path'], con)
 
-    def handle_orch_response(self, cnt, con):
+    def handle_response(self, cnt, con):
         reply = con
-        self.logger.info('EDS Orch response')
-        # if the program was waiting for the reply, notify it
-        if self.status.get('request'):
-            if self.status.get('request') == reply.get('request_ID'):
-                self.status['event'].set()
+        self.logger.info('EDS response from ' + cnt )
         # check if reply is for this application
         if reply.get('app_ID') == self.app_ID:
             # check the result in the reply
@@ -179,43 +175,9 @@ class TestApplication(XAE):
         else:
             self.logger.info('received message not for this app')
             self.logger.info(reply)
-
-    def handle_temp_response(self, cnt, reply):
-        self.logger.info('EDS sensor response')
         # if the program was waiting for the reply, notify it
         if self.status.get('request'):
-            if self.status.get('request') == reply.get('request_ID'):
+            if self.status['request'] == reply.get('request_ID'):
                 self.status['event'].set()
-        # check if reply is for this application
-        if reply.get('app_ID') == self.app_ID:
-            request_ID = reply['request_ID']
-            if reply.get('result') == 'SUCCESS':
-                self.logger.info(request_ID + ' was a success')
-            else:
-                error = reply['error_string']
-                self.logger.info(request_ID + ' did not succeed')
-                self.logger.info('error ' + error_string)
-        else:
-            self.logger.info('received message not for this app')
-            self.logger.info(reply)
-
-    def handle_simple_response(self, cnt, reply):
-        self.logger.info('EDS actuator response')
-        # if the program was waiting for the reply, notify it
-        if self.status.get('request'):
-            if self.status.get('request') == reply.get('request_ID'):
-                self.status['event'].set()
-        # check if reply is for this application
-        if reply.get('app_ID') == self.app_ID:
-            request_ID = reply['request_ID']
-            if reply.get('result') == 'SUCCESS':
-                self.logger.info(request_ID + ' was a success')
-            else:
-                error = reply['error_string']
-                self.logger.info(request_ID + ' did not succeed')
-                self.logger.info('error ' + error_string)
-        else:
-            self.logger.info('received message not for this app')
-            self.logger.info(reply)
 
 
