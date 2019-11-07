@@ -145,14 +145,14 @@ class TestApplication(XAE):
 
     def handle_actuator_out(self, cnt, con, index):
         timestamp = time.time() - self.starttime
-        self.logger.info(':actuator: index %d value %s' % (index, float(con)))
+        self.logger.info(':actuator: index %d value %s - time %s' % (index, float(con), timestamp))
         json_message = {'appname':'test1', 'type':'actuator', 'id':index, 'timestamp':timestamp }
         r = requests.post(self.hostport, json=json_message)
 
     def handle_temperature_sensor(self, cnt, con, index):
         timestamp = time.time() - self.starttime
         actuator_request = self.actuator_requests[index] 
-        self.logger.info(':sensor: index %d value %s' % (index, float(con)))
+        self.logger.info(':sensor: index %d value %s - time %s' % (index, float(con), timestamp))
         json_message = {'appname':'test1', 'type':'sensor', 'id':index, 'svalue':{'actual':float(con), 'threshold':20}, 'timestamp':timestamp}
         r = requests.post(self.hostport, json=json_message)
         if float(con) > 20:
