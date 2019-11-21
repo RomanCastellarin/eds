@@ -19,7 +19,7 @@ class TestApplication(XAE):
         self.actuator_simple_path = 'onem2m/SimpleActuator/'
 
         self.NUM_PAIRS = int(os.environ["TESTAPP_NUM_PAIRS"])
-        self.MAX_ROOMS = 8
+        self.MAX_ROOMS = int(os.environ["TESTAPP_CAPACITY"])
         self.stored_reply = {}
         self.sensor_requests = []
         self.actuator_requests = []
